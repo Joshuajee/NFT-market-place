@@ -16,7 +16,7 @@ export default function Search() {
 
             <InputBase
                 sx={{ ml: 1, flex: 1 }}
-                placeholder="Enter Token Address"
+                placeholder="Search Collection, Address"
                 inputProps={{ 'aria-label': 'search google maps' }}
             />
 

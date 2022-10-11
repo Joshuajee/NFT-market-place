@@ -26,16 +26,16 @@ const Description = (props: IProps) => {
     const uploadData = async () => {
 
         const payload = {  
-            title: name,  
-            discription: description, 
-            imageurl: `https://ipfs.io/ipfs/${sessionStorage.getItem("image")}`      
+            name,  
+            description, 
+            image: `https://ipfs.io/ipfs/${sessionStorage.getItem("image")}`      
         }
 
         setLoading(true)
     
         try {
             
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/jsonupload`, payload)
+            const res = await axios.post('/api/upload-meta', payload)
     
             sessionStorage.setItem("json", res?.data?.IpfsHash)
     

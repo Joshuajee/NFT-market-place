@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { LoadingButton } from "@mui/lab";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Toast, { ALERT_TYPES } from "../Alerts";
 import { Typography } from "@mui/material";
 import { ethers } from 'ethers';
-import abi from "../../../src/libs/abi.json";
+import nftAbi from "../../../src/libs/nftAbi.json";
+import { getAddress } from "../../libs/utils";
 
 
 interface IProps {
@@ -18,6 +19,7 @@ const Mint = (props: IProps) => {
     const [status, setStatus] = useState<ALERT_TYPES>(null);
     const [toast, setToast] = useState(false);
     const [toastMsg, setToastMsg] = useState("");
+    const [address, setAddress] = useState<string | null>(null);
 
     const { setStage, selectedImage } = props
 
@@ -26,39 +28,39 @@ const Mint = (props: IProps) => {
 
         setLoading(true)
   
-        //Upload data to IPFS
+
         try {
 
-            const metadataURL = "https://ipfs.io/ipfs/QmRJVFeMrtYS2CUVUM2cHJpBV5aX2xurpnsfZxLTTQbiD3?filename=party_bull.json"
+            const metadataURL = `https://ipfs.io/ipfs/${sessionStorage.getItem("json")}`
+            
             //After adding your Hardhat network to your metamask, this code will get providers and signers
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const provider = new ethers.providers.Web3Provider(window?.ethereum);
             const signer = provider.getSigner();
 
             //Pull the deployed contract instance
-            const contract = new ethers.Contract(String(process.env.NEXT_PUBLIC_CONTRACT), abi, signer)
-
-            //massage the params to be sent to the create NFT request
-            const price = ethers.utils.parseUnits("0.01", 'ether')
-            const listingPrice = (await contract.getListPrice()).toString()
+            const contract = new ethers.Contract(String(process.env.NEXT_PUBLIC_NFT_CONTRACT), nftAbi, signer)
 
             console.log("meta", metadataURL)
-            console.log(price)
-            console.log(listingPrice)
 
             //actually create the NFT
-            let transaction = await contract.createToken(metadataURL, price, { value: listingPrice })
+            const transaction = await contract.royaltyMint(address, metadataURL, 0)
+            
             await transaction.wait()
 
-            // updateMessage("");
-            // updateFormParams({ name: '', description: '', price: ''});
-        }
-        catch(e) {
+            setStage(3)
+
+        } catch(e) {
             //alert( "Upload error"+e )
+            //setToastMsg(Error(e)?.message)
         }
 
         setLoading(false)
 
     }
+
+    useEffect(() => {
+        getAddress(setAddress);
+    }, [])
 
 
     const handleClick = async () => {
@@ -89,13 +91,12 @@ const Mint = (props: IProps) => {
             
             <Typography variant={"h6"} sx={{marginBottom: "1em"}}> Mint Your NFT Now</Typography>
 
-            {/* <img   
-                onClick={handleClick}                      
+            <img                       
                 src={URL.createObjectURL(selectedImage)}
                 style={{ maxWidth: "100%", maxHeight: 250, cursor: 'pointer' }}
                 alt="Thumb"
                 />
-         */}
+         
                 <LoadingButton 
                     sx={{width: "100%", marginTop: "1em"}} 
                     variant={"contained"}

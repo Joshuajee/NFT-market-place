@@ -50,7 +50,7 @@ const Upload = (props: IProps) => {
 
         sessionStorage.setItem("image", res?.data?.IpfsHash)
 
-        //setStage(1)
+        setStage(1)
 
     } catch (error) {
         setStatus("error")

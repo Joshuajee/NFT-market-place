@@ -1,30 +1,21 @@
-import api from 'api'
-import { getNetwork } from '../../libs/chooseNetwork'
+import { Network, Alchemy } from "alchemy-sdk";
 
-const sdk = api('@alchemy-docs/v1.0#1ae9z2il7zo8f1u');
+const settings = {
+    apiKey: String(process.env.ALCHEMY_API_KEY), // Replace with your Alchemy API Key.
+    network: Network.ETH_GOERLI, // Replace with your network.
+};
+
+const alchemy = new Alchemy(settings);
 
 const getNft = async(req: any, res: any) => {
 
     try {
 
-        const  { chainId, owner, contractAddresses, pageKey } = req.query
+        const  { owner } = req.query
 
-        const network = getNetwork(chainId)
+        const data = await alchemy.nft.getNftsForOwner(owner);
 
-        sdk.server(network.link);
-    
-        const data = await sdk.getNFTs(
-            {
-                apiKey: network.apiKey,
-                withMetadata: true, 
-                owner: owner,
-                contractAddresses: contractAddresses != 'null' ? contractAddresses : undefined,
-                pageSize: 30,
-                pageKey: pageKey != 'null' ? pageKey : undefined,
-            }
-        )
-
-        res.send({ data: data })
+        res.send({ data })
 
     } catch (e) {
         res.status(500).send({error: e})

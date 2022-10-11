@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+
 export const truncateAddress = (address: string) => {
     if (!address) return "No Account";
     const match = address.match(
@@ -12,4 +14,9 @@ export const truncateAddress = (address: string) => {
     return "0x" + val.toString(16);
   };
     
-  
+export const getAddress = async (updateAddress: (address: string) => void)  => {
+  const provider = new ethers.providers.Web3Provider(window?.ethereum);
+  const signer = provider.getSigner();
+  const addr = await signer.getAddress();
+  updateAddress(addr);
+}  

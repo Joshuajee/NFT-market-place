@@ -9,18 +9,16 @@ interface IProps {
 
 const NFTCard = (props: IProps) => {
 
-    const { image, name, tokenId, owner } = props.nft
+    const { image, name, tokenId, contract } = props.nft
 
     const router = useRouter()
-    
-    console.log(props.nft)
 
     return (
         <Grid item xs={12} sm={6} md={4} lg={4} >
 
             <Card sx={{height: "30em", borderRadius: "10px"}}>
 
-                <img  onClick={() => router.push(`/nft?contract=${owner}&tokenId=${tokenId}`)} style={{objectFit: "cover"}} src={image} height="auto" width="100%" alt="NFT image" />
+                <img  onClick={() => router.push(`/nft?contract=${contract}&tokenId=${tokenId}`)} style={{objectFit: "cover"}} src={image} height="auto" width="100%" alt="NFT image" />
 
                 <Grid item sx={{marginTop: "1em"}} container spacing={2} justifyContent="center">
 

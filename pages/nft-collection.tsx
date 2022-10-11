@@ -8,12 +8,14 @@ import axios from "axios";
 import { getAddress } from "./../src/libs/utils";
 import NFTListCard from "../src/components/Cards/NFTListCard";
 
-export default function ListNFT () {
+
+export default function CollectionNFT () {
 
     const [address, setAddress] = useState<any>(null)
     const [NFTs, setNFTs] = useState<any>([])
 
     const [showModal, setShowModal] = useState(false);
+
 
     const getNFTs = async () => {
 

@@ -42,15 +42,15 @@ export default function Toast(props: IProps) {
         onClose={handleClose}>
 
         {
-            type === "error" ? (        
+          type === "error" ? (        
             <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                {message}
+              {message}
             </Alert>) :
-            (
+          (
             <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                {message}
+              {message}
             </Alert>
-            )
+          )
         }
 
     </Snackbar>

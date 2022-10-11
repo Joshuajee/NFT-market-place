@@ -6,7 +6,7 @@ import Link from '../libs/Link';
 import LoadingButton from '@mui/lab/LoadingButton';
 import styles from "./../../styles/Nav.module.css";
 import { ethers } from 'ethers';
-import { truncateAddress } from "./../libs/utils"
+import { getAddress, truncateAddress } from "./../libs/utils"
 import Search from './Search';
 
 
@@ -40,14 +40,6 @@ export default function NavBar(props: Props) {
     const [connected, toggleConnect] = useState(false);
     const [currAddress, updateAddress] = useState<string | null>(null);
 
-
-    async function getAddress() {
-        const provider = new ethers.providers.Web3Provider(window?.ethereum);
-        const signer = provider.getSigner();
-        const addr = await signer.getAddress();
-        updateAddress(addr);
-    }
-
     async function connect() {
 
         if (window?.ethereum) {
@@ -63,7 +55,7 @@ export default function NavBar(props: Props) {
     
             await window.ethereum.request({ method: 'eth_requestAccounts' })
                 .then(() => {
-                    window.location.replace(location.pathname)
+                    //window.location.replace(location.pathname)
                 });
 
         }
@@ -76,7 +68,7 @@ export default function NavBar(props: Props) {
 
         if(val){
             console.log("here");
-            getAddress();
+            getAddress(updateAddress);
             toggleConnect(val);
         }
 
@@ -98,15 +90,15 @@ export default function NavBar(props: Props) {
 
                         <Grid container>
 
-                            <Grid md={2}></Grid>
+                            <Grid item md={2}></Grid>
 
-                            <Grid md={5}>
+                            <Grid item md={5}>
 
                                 <Search />
 
                             </Grid>
 
-                            <Grid md={5}>
+                            <Grid item md={5}>
 
                                 <Grid container sx={{color: "white"}} justifyContent="flex-end">
 
@@ -122,7 +114,7 @@ export default function NavBar(props: Props) {
                                         className={styles.connect} 
                                         variant='contained'> 
                                         {       
-                                            currAddress ? truncateAddress(currAddress) : "Connect Wallet" 
+                                            currAddress ? "Connected" : "Connect Wallet" 
                                         }
                                     </LoadingButton>
 

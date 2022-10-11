@@ -4,23 +4,30 @@ import { ethers }   from "ethers";
 import NavBar from "../src/components/Navbar";
 import { Button, Card, Container, Grid, Typography } from "@mui/material";
 import abi from "../src/libs/abi.json";
+import nftAbi from "../src/libs/nftAbi.json";
 import axios from "axios";
 import { useRouter } from "next/router";
 import styles from "../styles/Pages.module.css";
 import { LoadingButton } from "@mui/lab";
+import Toast, { ALERT_TYPES } from "../src/components/Alerts";
 
 const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
 export default function NFT () {
 
-    const [message, updateMessage] = useState('');
-    const [image, setImage] = useState(null)
+    const [message, setMessage] = useState('');
+    const [toast, setToast] = useState(false);
+    const [messageType, setMessageType] = useState<ALERT_TYPES>(null);
+
     const [NFT, setNFT] = useState<any>(null)
-    const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [address, setAddress] = useState<string | null >(null);
 
     const router = useRouter()
 
-    const { tokenId, contract } = router.query
+    const { tokenId } = router.query
+
+    const nftAddress = String(router?.query?.contract)
 
     async function getNFTData() {
         
@@ -29,11 +36,14 @@ export default function NFT () {
         const addr = await signer.getAddress();
         //Pull the deployed contract instance
         const contract = new ethers.Contract(contractAddress, abi, signer)
-        //create an NFT Token
-        const tokenURI = await contract.tokenURI(tokenId);
-        const listedToken = await contract.getListedTokenForId(tokenId);
-        let meta = await axios.get(tokenURI);
-        meta = meta.data;
+        // //create an NFT Token
+        const listedToken = await contract.getListing(nftAddress, tokenId);
+ 
+        const NFTcontract = new ethers.Contract(nftAddress, nftAbi, signer)
+
+        const tokenURI = await NFTcontract.tokenURI(tokenId)
+
+        const meta = ((await axios.get(tokenURI)) as any).data;
 
         const price = ethers.utils.formatUnits(listedToken.price.toString(), 'ether');
 
@@ -41,46 +51,57 @@ export default function NFT () {
             price: price,
             tokenId: tokenId,
             seller: listedToken.seller,
-            owner: listedToken.owner,
             image: meta.image,
             name: meta.name,
             description: meta.description,
         }
 
         setNFT(item);
+        setAddress(addr)
         console.log("address", addr)
         //updateCurrAddress(addr);
     }
-
-    console.log(NFT)
     
     async function buyNFT() {
+
+        setLoading(true)
         
         try {
         
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const provider = new ethers.providers.Web3Provider(window?.ethereum);
+
             const signer = provider.getSigner();
     
             //Pull the deployed contract instance
             const contract = new ethers.Contract(contractAddress, abi, signer);
+
             const salePrice = ethers.utils.parseUnits(NFT.price, 'ether')
-            updateMessage("Buying the NFT... Please Wait (Upto 5 mins)")
+
             //run the executeSale function
-            let transaction = await contract.executeSale(tokenId, {value:salePrice});
+            const transaction = await contract.buyItem(nftAddress, tokenId, {value:salePrice});
+            
             await transaction.wait();
-    
-            alert('You successfully bought the NFT!');
-            updateMessage("");
+
+            setMessage('You successfully bought the NFT!')
+            setMessageType(null)
+            setToast(true)
         
         }   catch(e) {
-            //alert("Upload Error"+e)
+            console.error(e)
+            setMessage("An error occurred")
+            setMessageType("error")
+            setToast(true)
         }
+
+        setLoading(false)
+
     }
 
 
     useEffect(() => {
         getNFTData()
-    }, [getNFTData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
 
     return (
@@ -113,14 +134,22 @@ export default function NFT () {
 
                                         <Grid item xs={12}> <Typography className={styles.name} variant="body1"> {NFT.name} #{tokenId}</Typography> </Grid>
 
-                                        <Grid item xs={12}> <Typography variant="body1"> Description: {NFT.description}</Typography> </Grid>
+                                        <Grid item xs={12}> <Typography variant="body1"> Description: {NFT.description} </Typography> </Grid>
 
-                                        <Grid item xs={12}> <Typography variant="body1"> Owner: {NFT.owner}</Typography> </Grid>
+                                        <Grid item xs={12}> <Typography variant="body1"> Price: {NFT.price} </Typography> </Grid>
 
-                                        <Grid item xs={12}> <Typography variant="body1"> Seller: {NFT.seller}</Typography> </Grid>
+                                        <Grid item xs={12}> <Typography variant="body1"> Seller: {NFT.seller} </Typography> </Grid>
+
+                                        <Grid item xs={12}> <Typography variant="body1"> {NFT.seller === address && "You own this NFT"} </Typography> </Grid>
 
                                         <Grid item xs={12}>
-                                            <LoadingButton onClick={buyNFT} variant={"contained"}>
+                                            <LoadingButton 
+                                                disabled={NFT.seller === address}
+                                                onClick={buyNFT} 
+                                                variant={"contained"}
+                                                loading={loading}
+                                                loadingIndicator={"Loading..."}
+                                                >
                                                 Buy {NFT.price} ETH
                                             </LoadingButton> 
                                         </Grid>
@@ -138,6 +167,8 @@ export default function NFT () {
                 }
 
             </Container>
+
+            <Toast type={messageType} open={toast} setOpen={setToast} message={message} />
 
         </div>
     )

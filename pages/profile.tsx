@@ -1,15 +1,24 @@
 import axios from "axios";
-import { useState } from "react";
-import NFTTile from "./NFTTile";
+import NavBar from "../src/components/Navbar";
+import abi from "../src/libs/abi.json";
+import nftAbi from "../src/libs/nftAbi.json";
+import { ethers }   from "ethers";
+import { useEffect, useState } from "react";
+import { Container, Grid, Typography } from "@mui/material";
+import NFTCard from "../src/components/Cards/NFTCard";
+import { getAddress, truncateAddress } from "./../src/libs/utils";
+
+const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
 export default function Profile () {
+
     const [data, updateData] = useState([]);
     const [dataFetched, updateFetched] = useState(false);
     const [address, updateAddress] = useState("0x");
     const [totalPrice, updateTotalPrice] = useState("0");
 
-    async function getNFTData(tokenId) {
-        const ethers = require("ethers");
+    async function getNFTData() {
+
         let sumPrice = 0;
         //After adding your Hardhat network to your metamask, this code will get providers and signers
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -17,132 +26,105 @@ export default function Profile () {
         const addr = await signer.getAddress();
 
         //Pull the deployed contract instance
-        let contract = new ethers.Contract(MarketplaceJSON.address, MarketplaceJSON.abi, signer)
+        const contract = new ethers.Contract(contractAddress, abi, signer)
 
         //create an NFT Token
-        let transaction = await contract.getMyNFTs()
+        const transaction = await contract.getMyNFTs()
 
         /*
         * Below function takes the metadata from tokenURI and the data returned by getMyNFTs() contract function
         * and creates an object of information that is to be displayed
         */
         
-        const items = await Promise.all(transaction.map(async i => {
-            const tokenURI = await contract.tokenURI(i.tokenId);
-            let meta = await axios.get(tokenURI);
-            meta = meta.data;
+        const items = await Promise.all(transaction.map(async (i: any) => {
 
-            let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
-            let item = {
+            const contract = new ethers.Contract(String(process.env.NEXT_PUBLIC_NFT_CONTRACT), nftAbi, signer)
+
+            const tokenURI = await contract.tokenURI(i.tokenId);
+
+            const meta = (await axios.get(tokenURI)).data;
+
+            const price = ethers.utils.formatUnits(i.price.toString(), 'ether');
+
+            const item = {
                 price,
                 tokenId: i.tokenId.toNumber(),
                 seller: i.seller,
-                owner: i.owner,
-                image: meta.image,
+                image: meta.image,                    
                 name: meta.name,
                 description: meta.description,
             }
+
             sumPrice += Number(price);
+
             return item;
+            
         }))
 
-        updateData(items);
+        updateData(items as any);
         updateFetched(true);
         updateAddress(addr);
         updateTotalPrice(sumPrice.toPrecision(3));
     }
 
-    const params = useParams();
-    const tokenId = params.tokenId;
-    if(!dataFetched)
-        getNFTData(tokenId);
+    useEffect(() => {
+        getNFTData();
+    }, [])
+
+    console.log(address)
 
     return (
-        <div className="profileClass" style={{"min-height":"100vh"}}>
-            <Navbar></Navbar>
-            <div className="profileClass">
-            <div className="flex text-center flex-col mt-11 md:text-2xl text-white">
-                <div className="mb-5">
-                    <h2 className="font-bold">Wallet Address</h2>  
-                    {address}
-                </div>
-            </div>
-            <div className="flex flex-row text-center justify-center mt-10 md:text-2xl text-white">
-                    <div>
-                        <h2 className="font-bold">No. of NFTs</h2>
-                        {data.length}
-                    </div>
-                    <div className="ml-20">
-                        <h2 className="font-bold">Total Value</h2>
-                        {totalPrice} ETH
-                    </div>
-            </div>
-            <div className="flex flex-col text-center items-center mt-11 text-white">
-                <h2 className="font-bold">Your NFTs</h2>
-                <div className="flex justify-center flex-wrap max-w-screen-xl">
-                    {data.map((value, index) => {
-                    return <NFTTile data={value} key={index}></NFTTile>;
-                    })}
-                </div>
-                <div className="mt-10 text-xl">
-                    {data.length == 0 ? "Oops, No NFT data to display (Are you logged in?)":""}
-                </div>
-            </div>
-            </div>
+        <div>
+
+            <NavBar />
+
+            <Container maxWidth="lg">
+
+                <Grid item justifyContent={"center"} container> 
+
+                    <Typography sx={{fontWeight: 700, marginTop: "1em"}} textAlign={"center"} variant="h4"> Wallet Address </Typography>
+                
+                </Grid>
+
+                <Grid item justifyContent={"center"} container> 
+
+                    <Typography variant="body1"> {address} </Typography>
+
+                </Grid>
+
+                <Grid item justifyContent={"center"} container> 
+
+                    <Grid item xs={1}>
+
+                        <div>
+                            <h2 className="font-bold">No. of NFTs</h2>
+                            {data.length}
+                        </div>
+
+                    </Grid>
+
+                    <Grid item xs={1}>
+
+                        <div className="ml-20">
+                            <h2 className="font-bold">Total Value</h2>
+                            {totalPrice} ETH
+                        </div>
+
+                    </Grid>
+
+                </Grid>
+
+                <Grid container spacing={2} sx={{marginTop: "2em"}}>
+
+                    {
+                        data.map((nft, index) => <NFTCard nft={nft} key={index} /> )
+                    }
+
+                </Grid>
+
+            </Container>
+
         </div>
     )
 };
 
-
-
-
-
-
-    // const [data, updateData] = useState([]);
-    // const [dataFetched, updateFetched] = useState(false);
-    // const [address, updateAddress] = useState("0x");
-    // const [totalPrice, updateTotalPrice] = useState("0");
-
-    // async function getNFTData(tokenId) {
-    //     const ethers = require("ethers");
-    //     let sumPrice = 0;
-    //     //After adding your Hardhat network to your metamask, this code will get providers and signers
-    //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //     const signer = provider.getSigner();
-    //     const addr = await signer.getAddress();
-
-    //     //Pull the deployed contract instance
-    //     let contract = new ethers.Contract(MarketplaceJSON.address, MarketplaceJSON.abi, signer)
-
-    //     //create an NFT Token
-    //     let transaction = await contract.getMyNFTs()
-
-    //     /*
-    //     * Below function takes the metadata from tokenURI and the data returned by getMyNFTs() contract function
-    //     * and creates an object of information that is to be displayed
-    //     */
-        
-    //     const items = await Promise.all(transaction.map(async i => {
-    //         const tokenURI = await contract.tokenURI(i.tokenId);
-    //         let meta = await axios.get(tokenURI);
-    //         meta = meta.data;
-
-    //         let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
-    //         let item = {
-    //             price,
-    //             tokenId: i.tokenId.toNumber(),
-    //             seller: i.seller,
-    //             owner: i.owner,
-    //             image: meta.image,
-    //             name: meta.name,
-    //             description: meta.description,
-    //         }
-    //         sumPrice += Number(price);
-    //         return item;
-    //     }))
-
-    //     updateData(items);
-    //     updateFetched(true);
-    //     updateAddress(addr);
-    //     updateTotalPrice(sumPrice.toPrecision(3));
-    // }
