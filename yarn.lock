@@ -4073,11 +4073,6 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-to-uint8array@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/to-uint8array/-/to-uint8array-0.1.1.tgz#f4b5db813c0bcb80f8ecc4b8796fabe58550ab63"
-  integrity sha512-v08dT9sTNGdZ4cKCpbtrO3MT6kbCFCPBh4S6c/iIxOMIlQQABiybck8HRGmeod5cFKuYYLZ+4MaEYcrfR8Um/g==
-
 tr46@~0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
