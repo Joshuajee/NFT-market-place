@@ -2,7 +2,7 @@
 import { LoadingButton } from "@mui/lab";
 import { useEffect, useRef, useState } from "react";
 import Toast, { ALERT_TYPES } from "../Alerts";
-import { Typography } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
 import { ethers } from 'ethers';
 import nftAbi from "../../../src/libs/nftAbi.json";
 import { getAddress } from "../../libs/utils";
@@ -20,6 +20,8 @@ const Mint = (props: IProps) => {
     const [toast, setToast] = useState(false);
     const [toastMsg, setToastMsg] = useState("");
     const [address, setAddress] = useState<string | null>(null);
+    const [royalty, setRoyalty] = useState <number | null> (null);
+
 
     const { setStage, selectedImage } = props
 
@@ -39,8 +41,6 @@ const Mint = (props: IProps) => {
 
             //Pull the deployed contract instance
             const contract = new ethers.Contract(String(process.env.NEXT_PUBLIC_NFT_CONTRACT), nftAbi, signer)
-
-            console.log("meta", metadataURL)
 
             //actually create the NFT
             const transaction = await contract.royaltyMint(address, metadataURL, 0)
@@ -86,19 +86,29 @@ const Mint = (props: IProps) => {
                 justifyContent: "center",
                 alignItems: "center",
                 width: "100%",
-                height: 360
+                height: 260
             }}>
             
-            <Typography variant={"h6"} sx={{marginBottom: "1em"}}> Mint Your NFT Now</Typography>
+            <Typography variant={"h6"} sx={{marginBottom: "1em"}}> Im</Typography>
+{/* 
+                <img                       
+                    src={URL.createObjectURL(selectedImage)}
+                    style={{ maxWidth: "100%", maxHeight: 250, cursor: 'pointer' }}
+                    alt="Thumb"
+                    /> */}
 
-            <img                       
-                src={URL.createObjectURL(selectedImage)}
-                style={{ maxWidth: "100%", maxHeight: 250, cursor: 'pointer' }}
-                alt="Thumb"
-                />
+                
+                <TextField 
+                    type="number"
+                    label={"Royalty Rate"} 
+                    value={royalty}
+                    onChange={(e) => setRoyalty((e.target.value as any))}
+                    sx={{marginTop: "0.6em", width: "100%"}}
+                    InputProps={{sx:{color: "#000"}}}
+                    />
          
                 <LoadingButton 
-                    sx={{width: "100%", marginTop: "1em"}} 
+                    sx={{width: "100%", marginTop: "1em", height: "4em"}} 
                     variant={"contained"}
                     onClick={handleClick}
                     loading={loading}

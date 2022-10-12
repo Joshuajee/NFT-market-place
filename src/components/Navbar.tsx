@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, AppBar, Toolbar, useScrollTrigger } from '@mui/material';
+import { Grid, AppBar, Toolbar, useScrollTrigger, Typography } from '@mui/material';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import Link from '../libs/Link';
@@ -37,7 +37,6 @@ function ElevationScroll(props: Props) {
 
 export default function NavBar(props: Props) {
 
-    const [connected, toggleConnect] = useState(false);
     const [currAddress, updateAddress] = useState<string | null>(null);
 
     async function connect() {
@@ -69,7 +68,6 @@ export default function NavBar(props: Props) {
         if(val){
             console.log("here");
             getAddress(updateAddress);
-            toggleConnect(val);
         }
 
         window?.ethereum?.on('accountsChanged', function(accounts: string) {
@@ -90,7 +88,9 @@ export default function NavBar(props: Props) {
 
                         <Grid container>
 
-                            <Grid item md={2}></Grid>
+                            <Grid item md={2}> 
+                                <Typography variant='h6' sx={{fontWeight: 700, lineHeight: 2.5}}>  JEE Marketplace </Typography>                            
+                            </Grid>
 
                             <Grid item md={5}>
 

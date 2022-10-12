@@ -4,7 +4,7 @@ import multer from 'multer';
 import pinataSDK from '@pinata/sdk';
 const fs = require('fs');
 
-const pinata = pinataSDK(String(process.env.NEXT_PUBLIC_PINATA_KEY), String(process.env.NEXT_PUBLIC_PINATA_SECRET));
+const pinata = pinataSDK(String(process.env.PINATA_KEY), String(process.env.PINATA_SECRET));
 
 
 interface NextConnectApiRequest extends NextApiRequest {

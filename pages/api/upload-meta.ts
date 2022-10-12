@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import pinataSDK from '@pinata/sdk';
 
-const pinata = pinataSDK(String(process.env.NEXT_PUBLIC_PINATA_KEY), String(process.env.NEXT_PUBLIC_PINATA_SECRET));
+const pinata = pinataSDK(String(process.env.PINATA_KEY), String(process.env.PINATA_SECRET));
 
 
 

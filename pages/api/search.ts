@@ -7,16 +7,15 @@ const settings = {
 
 const alchemy = new Alchemy(settings);
 
-const getNft = async(req: any, res: any) => {
+const searchCollection = async(req: any, res: any) => {
 
     try {
 
-        const  { contractAddress, pageKey } = req.query
+        const  { contractAddress } = req.query
+        
+        const data = await alchemy.nft.getContractMetadata(contractAddress);
 
-        const data = await alchemy.nft.getNftsForContract(contractAddress);
-
-
-        res.send(data)
+        res.send({ data })
 
     } catch (e) {
         res.status(500).send({error: e})
@@ -25,4 +24,4 @@ const getNft = async(req: any, res: any) => {
 
 }
 
-export default getNft
+export default searchCollection
