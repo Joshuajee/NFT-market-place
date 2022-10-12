@@ -28,7 +28,9 @@ const Success = (props: IProps) => {
                             
             <ThumbUp color={"success"} sx={{width: "200px", height: "200px"}} />
 
-            <Typography textAlign={"center"} sx={{maxWidth: "100%", maxHeight: 320}}> Your NFT has been minted on the Doge chain</Typography>
+            <Typography textAlign={"center"} sx={{maxWidth: "100%", maxHeight: 320}}>
+                Your NFT has been minted Refreash the Page and Scroll Down to see it
+            </Typography>
 
             <Button 
                 sx={{width: "100%", marginTop: "1em"}} 

@@ -34,7 +34,7 @@ export default function Modal(props: IProps) {
 
   const { open, setOpen } = props
   const [selectedImage, setSelectedImage] = React.useState(null);
-  const [stage, setStage] = React.useState(2)
+  const [stage, setStage] = React.useState(0)
   const [name, setName] = React.useState("")
   const [description, setDescription] = React.useState("")
 

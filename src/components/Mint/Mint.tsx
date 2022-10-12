@@ -51,7 +51,7 @@ const Mint = (props: IProps) => {
 
         } catch(e) {
             //alert( "Upload error"+e )
-            //setToastMsg(Error(e)?.message)
+            setToastMsg("e?.message")
         }
 
         setLoading(false)
@@ -83,20 +83,17 @@ const Mint = (props: IProps) => {
             style={{     
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "center",
                 alignItems: "center",
                 width: "100%",
                 height: 260
             }}>
             
-            <Typography variant={"h6"} sx={{marginBottom: "1em"}}> Im</Typography>
-{/* 
-                <img                       
-                    src={URL.createObjectURL(selectedImage)}
-                    style={{ maxWidth: "100%", maxHeight: 250, cursor: 'pointer' }}
-                    alt="Thumb"
-                    /> */}
+                <Typography variant={"h5"} sx={{marginBottom: "0.6em", fontWeight: 700 }}> Input Royalty Rate below</Typography>
 
+                <Typography paragraph sx={{marginBottom: "1em", color: "red"}}> 
+                    Please Input a Royalty Rate Between 0 and 50, 
+                    if you don&apos;t want Royalty for this Asset leave in blank or input 0
+                </Typography>
                 
                 <TextField 
                     type="number"
@@ -109,6 +106,7 @@ const Mint = (props: IProps) => {
          
                 <LoadingButton 
                     sx={{width: "100%", marginTop: "1em", height: "4em"}} 
+                    disabled={Math.abs(Number(royalty)) >= 51}
                     variant={"contained"}
                     onClick={handleClick}
                     loading={loading}

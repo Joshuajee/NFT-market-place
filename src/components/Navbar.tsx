@@ -66,7 +66,6 @@ export default function NavBar(props: Props) {
         const val = window?.ethereum?.isConnected();
 
         if(val){
-            console.log("here");
             getAddress(updateAddress);
         }
 
