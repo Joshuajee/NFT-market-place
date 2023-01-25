@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { LoadingButton } from "@mui/lab";
 import { useEffect, useRef, useState } from "react";
-import Toast, { ALERT_TYPES } from "../Alerts";
+import Toast, { ALERT_TYPES } from "../alerts";
 import { TextField, Typography } from "@mui/material";
 import { ethers } from 'ethers';
-import nftAbi from "../../../src/libs/nftAbi.json";
+import nftAbi from "../../libs/nftAbi.json";
 import { getAddress } from "../../libs/utils";
 
 

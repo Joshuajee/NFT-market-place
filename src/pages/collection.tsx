@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import NavBar from "../src/components/Navbar";
-import { Button, Container, Grid } from "@mui/material";
-import Modal from "../src/components/Mint/Modal";
-import NFTCard from "../src/components/Cards/NFTCard";
+import NavBar from "../components/navbar";
+import { Button, Container, Grid, Typography } from "@mui/material";
+import Modal from "../components/mint/modal";
+import NFTCard from "../components/cards/NFTCard";
 import axios from "axios";
-import { getAddress } from "./../src/libs/utils";
-import NFTListCard from "../src/components/Cards/NFTListCard";
+import { getAddress } from "../libs/utils";
+import NFTListCard from "../components/cards/NFTListCard";
+import { useRouter } from "next/router";
 
-export default function ListNFT () {
+export default function Collection () {
+
+    const router = useRouter()
+
+    const { contract } = router.query
 
     const [address, setAddress] = useState<any>(null)
     const [NFTs, setNFTs] = useState<any>([])
@@ -17,9 +22,9 @@ export default function ListNFT () {
 
     const getNFTs = async () => {
 
-        const res = (await axios.post(`/api/get-nfts?owner=${address}`)).data
+        const data = (await axios.post(`/api/get-nfts-collection?contractAddress=${contract}`)).data
 
-        setNFTs(res.data.ownedNfts)
+        setNFTs(data.nfts)
 
     }
 
@@ -28,9 +33,9 @@ export default function ListNFT () {
     }, [])
 
     useEffect(() => {
-        if (address) getNFTs()
+        if (contract) getNFTs()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [address])
+    }, [contract])
 
 
 
@@ -44,7 +49,7 @@ export default function ListNFT () {
                 <Grid container spacing={2} sx={{marginTop: "2em"}}>
 
                     <Grid container justifyContent={"center"}> 
-                        <Button onClick={() => setShowModal(true)} variant="contained">Mint NFT</Button>
+                        <Typography></Typography>
                     </Grid>
 
                 </Grid>

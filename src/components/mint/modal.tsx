@@ -8,11 +8,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { Close } from '@mui/icons-material';
-import Upload from './Upload';
-import Description from './Description';
-import styles from '../../../styles/Home.module.css'
-import Mint from './Mint';
-import Success from './Success';
+import Upload from './upload';
+import Description from './description';
+import styles from '../../styles/Home.module.css'
+import Mint from '.';
+import Success from './success';
 
 
 

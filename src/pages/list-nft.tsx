@@ -1,27 +1,28 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import NavBar from "../src/components/Navbar";
+import NavBar from "../components/navbar";
 import { Button, Container, Grid } from "@mui/material";
-import Modal from "../src/components/Mint/Modal";
-import NFTCard from "../src/components/Cards/NFTCard";
+import Modal from "../components/mint/modal";
+import NFTCard from "../components/cards/NFTCard";
 import axios from "axios";
-import { getAddress } from "./../src/libs/utils";
-import NFTListCard from "../src/components/Cards/NFTListCard";
+import { getAddress } from "../libs/utils";
+import NFTListCard from "../components/cards/NFTListCard";
+import { getNft } from "../libs/contracts";
 
-
-export default function CollectionNFT () {
+export default function ListNFT () {
 
     const [address, setAddress] = useState<any>(null)
     const [NFTs, setNFTs] = useState<any>([])
 
     const [showModal, setShowModal] = useState(false);
 
-
     const getNFTs = async () => {
 
-        const res = (await axios.post(`/api/get-nfts?owner=${address}`)).data
+        const res = (await getNft(address))
 
-        setNFTs(res.data.ownedNfts)
+        console.log(res)
+
+        //setNFTs(res.data.ownedNfts)
 
     }
 

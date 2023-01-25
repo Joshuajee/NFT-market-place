@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import NavBar from "../src/components/Navbar";
+import NavBar from "../components/navbar";
 import { Button, Container, Grid } from "@mui/material";
-import Modal from "../src/components/Mint/Modal";
-import NFTCard from "../src/components/Cards/NFTCard";
+import Modal from "../components/mint/modal";
+import NFTCard from "../components/cards/NFTCard";
 import axios from "axios";
-import { getAddress } from "./../src/libs/utils";
-import NFTListCard from "../src/components/Cards/NFTListCard";
+import { getAddress } from "../libs/utils";
+import NFTListCard from "../components/cards/NFTListCard";
 
 
 export default function WalletNFT () {

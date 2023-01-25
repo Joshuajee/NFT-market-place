@@ -2,7 +2,7 @@
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
 import { useRef, useState } from "react";
-import Toast, { ALERT_TYPES } from "../Alerts";
+import Toast, { ALERT_TYPES } from "../alerts";
 
 
 interface IProps {

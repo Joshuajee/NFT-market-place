@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import abi from "../src/libs/abi.json";
-import nftAbi from "../src/libs/nftAbi.json";
+import abi from "../libs/nftAbi.json";
+import nftAbi from "../libs/nftAbi.json";
 import { Container } from "@mui/system";
 import { Grid } from "@mui/material";
-import Navbar from "../src/components/Navbar";
-import NFTCard from "../src/components/Cards/NFTCard";
+import Navbar from "../components/navbar";
+import NFTCard from "../components/cards/NFTCard";
 
 export default function Index() {
 
@@ -54,7 +54,7 @@ export default function Index() {
   }
 
   useEffect(() => {
-    if(!dataFetched) getAllNFTs();
+    //if(!dataFetched) getAllNFTs();
   }, [dataFetched])
 
   return (

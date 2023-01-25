@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, AppBar, Toolbar, useScrollTrigger, Typography } from '@mui/material';
-import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
+import ConnectionBtn from "./connection/button"
 import Link from '../libs/Link';
 import LoadingButton from '@mui/lab/LoadingButton';
-import styles from "./../../styles/Nav.module.css";
+import styles from "./../styles/Nav.module.css";
 import { ethers } from 'ethers';
-import { getAddress, truncateAddress } from "./../libs/utils"
-import Search from './Search';
+import { getAddress, truncateAddress } from "../libs/utils"
+import Search from './search';
 
 
 interface Props {
@@ -36,44 +35,6 @@ function ElevationScroll(props: Props) {
 }
 
 export default function NavBar(props: Props) {
-
-    const [currAddress, updateAddress] = useState<string | null>(null);
-
-    async function connect() {
-
-        if (window?.ethereum) {
-
-            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-
-            if(chainId !== '0x5') {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0x5' }],
-                })
-            }  
-    
-            await window.ethereum.request({ method: 'eth_requestAccounts' })
-                .then(() => {
-                    //window.location.replace(location.pathname)
-                });
-
-        }
-
-    }
-
-    useEffect(() => {
-
-        const val = window?.ethereum?.isConnected();
-
-        if(val){
-            getAddress(updateAddress);
-        }
-
-        window?.ethereum?.on('accountsChanged', function(accounts: string) {
-
-        })
-
-    }, []);
 
 
     return (
@@ -107,15 +68,7 @@ export default function NavBar(props: Props) {
 
                                     <Link className={styles.link} sx={{color: "white"}} href="/profile"> Profile </Link>
                     
-                                    <LoadingButton 
-                                        color="warning" 
-                                        onClick={ !currAddress ? connect : undefined } 
-                                        className={styles.connect} 
-                                        variant='contained'> 
-                                        {       
-                                            currAddress ? "Connected" : "Connect Wallet" 
-                                        }
-                                    </LoadingButton>
+                                    <ConnectionBtn />
 
                                 </Grid>
 

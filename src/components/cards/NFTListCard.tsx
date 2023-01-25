@@ -81,7 +81,7 @@ const NFTListCard = (props: IProps) => {
 
             <Card sx={{height: "30em", borderRadius: "10px"}}>
 
-                <img style={{objectFit: "cover"}} src={image} height="auto" width="100%" alt="NFT image" />
+                <img alt={`${name} #${tokenId}`} style={{objectFit: "cover"}} src={image} height="auto" width="100%" />
 
                 <Grid item sx={{marginTop: "1em"}} container spacing={2} justifyContent="center">
 

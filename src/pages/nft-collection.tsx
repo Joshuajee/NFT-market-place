@@ -1,30 +1,27 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import NavBar from "../src/components/Navbar";
-import { Button, Container, Grid, Typography } from "@mui/material";
-import Modal from "../src/components/Mint/Modal";
-import NFTCard from "../src/components/Cards/NFTCard";
+import NavBar from "../components/navbar";
+import { Button, Container, Grid } from "@mui/material";
+import Modal from "../components/mint/modal";
+import NFTCard from "../components/cards/NFTCard";
 import axios from "axios";
-import { getAddress } from "./../src/libs/utils";
-import NFTListCard from "../src/components/Cards/NFTListCard";
-import { useRouter } from "next/router";
+import { getAddress } from "../libs/utils";
+import NFTListCard from "../components/cards/NFTListCard";
 
-export default function Collection () {
 
-    const router = useRouter()
-
-    const { contract } = router.query
+export default function CollectionNFT () {
 
     const [address, setAddress] = useState<any>(null)
     const [NFTs, setNFTs] = useState<any>([])
 
     const [showModal, setShowModal] = useState(false);
 
+
     const getNFTs = async () => {
 
-        const data = (await axios.post(`/api/get-nfts-collection?contractAddress=${contract}`)).data
+        const res = (await axios.post(`/api/get-nfts?owner=${address}`)).data
 
-        setNFTs(data.nfts)
+        setNFTs(res.data.ownedNfts)
 
     }
 
@@ -33,9 +30,9 @@ export default function Collection () {
     }, [])
 
     useEffect(() => {
-        if (contract) getNFTs()
+        if (address) getNFTs()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [contract])
+    }, [address])
 
 
 
@@ -49,7 +46,7 @@ export default function Collection () {
                 <Grid container spacing={2} sx={{marginTop: "2em"}}>
 
                     <Grid container justifyContent={"center"}> 
-                        <Typography></Typography>
+                        <Button onClick={() => setShowModal(true)} variant="contained">Mint NFT</Button>
                     </Grid>
 
                 </Grid>

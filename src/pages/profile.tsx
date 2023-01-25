@@ -1,12 +1,12 @@
 import axios from "axios";
-import NavBar from "../src/components/Navbar";
-import abi from "../src/libs/abi.json";
-import nftAbi from "../src/libs/nftAbi.json";
+import NavBar from "../components/navbar";
+import abi from "../libs/abi.json";
+import nftAbi from "../libs/nftAbi.json";
 import { ethers }   from "ethers";
 import { useEffect, useState } from "react";
 import { Container, Grid, Typography } from "@mui/material";
-import NFTCard from "../src/components/Cards/NFTCard";
-import { getAddress, truncateAddress } from "./../src/libs/utils";
+import NFTCard from "../components/cards/NFTCard";
+import { getAddress, truncateAddress } from "../libs/utils";
 
 const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 

@@ -1,15 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
 import { ethers }   from "ethers";
-import NavBar from "../src/components/Navbar";
+import NavBar from "../components/navbar";
 import { Button, Card, Container, Grid, Typography } from "@mui/material";
-import abi from "../src/libs/abi.json";
-import nftAbi from "../src/libs/nftAbi.json";
+import abi from "../libs/abi.json";
+import nftAbi from "../libs/nftAbi.json";
 import axios from "axios";
 import { useRouter } from "next/router";
 import styles from "../styles/Pages.module.css";
 import { LoadingButton } from "@mui/lab";
-import Toast, { ALERT_TYPES } from "../src/components/Alerts";
+import Toast, { ALERT_TYPES } from "../components/alerts";
 
 const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
