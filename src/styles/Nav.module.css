@@ -10,3 +10,19 @@
     margin-left: 1em;
     margin-right: 1em;
 }
+
+.search {
+    width: 400px;
+}
+
+@media screen and (max-width: 600px) {
+    .link {
+        width: 100%;
+        display: none;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+}

@@ -14,7 +14,7 @@ export default function Layout(props: IProps) {
     return (
         <Grid container sx={{background: "red"}}>
             <Navbar />
-            <Box sx={{backgroundColor: "#1E1E1E", flexGrow: "1", width: "100vw" }}>
+            <Box sx={{backgroundColor: "#1E1E1E", flexGrow: "1", width: "100vw", pb: 6 }}>
                 <Container maxWidth="lg">
                     {props.children}
                 </Container>

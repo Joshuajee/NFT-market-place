@@ -5,9 +5,9 @@ import abi from "../libs/nftAbi.json";
 import nftAbi from "../libs/nftAbi.json";
 import { Container } from "@mui/system";
 import { Grid } from "@mui/material";
-import Navbar from "../components/navbar";
+import Navbar from "../components/app/navbar";
 import NFTCard from "../components/cards/NFTCard";
-import Layout from "../components/layout";
+import Layout from "../components/app/layout";
 
 export default function Home() {
 

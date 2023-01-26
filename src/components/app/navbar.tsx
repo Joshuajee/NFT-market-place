@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, AppBar, Toolbar, useScrollTrigger, Typography } from '@mui/material';
-import ConnectionBtn from "./connection/button"
-import Link from '../libs/Link';
+import ConnectionBtn from "./../connection/button"
+import Link from '../../libs/Link';
 import LoadingButton from '@mui/lab/LoadingButton';
-import styles from "./../styles/Nav.module.css";
+import styles from "./../../styles/Nav.module.css";
 import { ethers } from 'ethers';
-import { getAddress, truncateAddress } from "../libs/utils"
+import { getAddress, truncateAddress } from "../../libs/utils"
 import Search from './search';
 
 
@@ -49,7 +49,7 @@ export default function NavBar(props: Props) {
                             <Grid item md={5}>
                                 <Search />
                             </Grid>
-                            <Grid item md={5}>
+                            <Grid item md={5} className={styles.link}>
                                 <Grid container sx={{color: "white"}} justifyContent="flex-end">
                                     <Link className={styles.link} sx={{color: "white"}} href="/"> MarketPlace </Link>
                                     <Link className={styles.link} sx={{color: "white"}} href="/list-nft"> List NFT </Link>

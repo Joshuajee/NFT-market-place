@@ -1,15 +1,14 @@
-/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
 import { ethers }   from "ethers";
-import NavBar from "../components/navbar";
-import { Button, Card, Container, Grid, Typography } from "@mui/material";
+import { Card, Container, Grid, Typography } from "@mui/material";
 import abi from "../libs/abi.json";
 import nftAbi from "../libs/nftAbi.json";
 import axios from "axios";
 import { useRouter } from "next/router";
 import styles from "../styles/Pages.module.css";
 import { LoadingButton } from "@mui/lab";
-import Toast, { ALERT_TYPES } from "../components/alerts";
+import Toast, { ALERT_TYPES } from "../components/app/alerts";
+import Layout from "../components/app/layout";
 
 const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
@@ -99,77 +98,69 @@ export default function NFT () {
 
 
     useEffect(() => {
-        getNFTData()
+        // getNFTData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 
     return (
-        <div>
+        <Layout>
+            
+            {
 
-            <NavBar />
+                NFT && (
+                    <Grid container spacing={2} sx={{marginTop: "2em"}}>
 
-            <Container maxWidth="lg">
-
-                {
-
-                    NFT && (
-                        <Grid container spacing={2} sx={{marginTop: "2em"}}>
-
-                            <Grid item md={6}> 
-        
-                                <Card sx={{height: "30em", borderRadius: "10px"}}>
-        
-                                    <img src={NFT.image} height="100%" width="auto" alt="NFT image" />
-        
-                                </Card>                    
-        
-                            </Grid>
-        
-                            <Grid item md={6}> 
-                            
-                                <Card sx={{height: "30em", borderRadius: "10px", padding: "1em"}}>
+                        <Grid item md={6}> 
     
-                                    <Grid item container spacing={2} justifyContent="center">
-
-                                        <Grid item xs={12}> <Typography className={styles.name} variant="body1"> {NFT.name} #{tokenId}</Typography> </Grid>
-
-                                        <Grid item xs={12}> <Typography variant="body1"> Description: {NFT.description} </Typography> </Grid>
-
-                                        <Grid item xs={12}> <Typography variant="body1"> Price: {NFT.price} </Typography> </Grid>
-
-                                        <Grid item xs={12}> <Typography variant="body1"> Seller: {NFT.seller} </Typography> </Grid>
-
-                                        <Grid item xs={12}> <Typography variant="body1"> {NFT.seller === address && "You own this NFT"} </Typography> </Grid>
-
-                                        <Grid item xs={12}>
-                                            <LoadingButton 
-                                                disabled={NFT.seller === address}
-                                                onClick={buyNFT} 
-                                                variant={"contained"}
-                                                loading={loading}
-                                                loadingIndicator={"Loading..."}
-                                                >
-                                                Buy {NFT.price} ETH
-                                            </LoadingButton> 
-                                        </Grid>
-                                            
-                                    </Grid>
-
-                                </Card>
-
-                            </Grid>
-        
+                            <Card sx={{height: "30em", borderRadius: "10px"}}>
+    
+                                <img src={NFT.image} height="100%" width="auto" alt="NFT image" />
+    
+                            </Card>                    
+    
                         </Grid>
+    
+                        <Grid item md={6}> 
+                        
+                            <Card sx={{height: "30em", borderRadius: "10px", padding: "1em"}}>
 
-                    )
+                                <Grid item container spacing={2} justifyContent="center">
 
-                }
+                                    <Grid item xs={12}> <Typography className={styles.name} variant="body1"> {NFT.name} #{tokenId}</Typography> </Grid>
 
-            </Container>
+                                    <Grid item xs={12}> <Typography variant="body1"> Description: {NFT.description} </Typography> </Grid>
 
-            <Toast type={messageType} open={toast} setOpen={setToast} message={message} />
+                                    <Grid item xs={12}> <Typography variant="body1"> Price: {NFT.price} </Typography> </Grid>
 
-        </div>
+                                    <Grid item xs={12}> <Typography variant="body1"> Seller: {NFT.seller} </Typography> </Grid>
+
+                                    <Grid item xs={12}> <Typography variant="body1"> {NFT.seller === address && "You own this NFT"} </Typography> </Grid>
+
+                                    <Grid item xs={12}>
+                                        <LoadingButton 
+                                            disabled={NFT.seller === address}
+                                            onClick={buyNFT} 
+                                            variant={"contained"}
+                                            loading={loading}
+                                            loadingIndicator={"Loading..."}
+                                            >
+                                            Buy {NFT.price} ETH
+                                        </LoadingButton> 
+                                    </Grid>
+                                        
+                                </Grid>
+
+                            </Card>
+
+                        </Grid>
+    
+                    </Grid>
+
+                )
+
+            }
+
+        </Layout>
     )
 }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Menu, MenuItem, Paper, InputBase, IconButton, CircularProgress, Grid, Divider, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import styles from "./../../styles/Nav.module.css";
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
@@ -48,7 +49,8 @@ export default function Search() {
     return (
         <Paper
             component="form"
-            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
+            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
+            className={styles.search}
             >
 
             <Grid item container>
