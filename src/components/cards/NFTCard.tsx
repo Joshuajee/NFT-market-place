@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Card, Grid, Typography } from "@mui/material"
+import { Box, Card, Grid, Typography } from "@mui/material"
 import { useRouter } from "next/router"
 import React from "react"
 
@@ -16,15 +16,17 @@ const NFTCard = (props: IProps) => {
     return (
         <Grid item xs={12} sm={6} md={4} lg={4} >
 
-            <Card sx={{height: "30em", borderRadius: "10px"}}>
+            <Card sx={{height: "100%", width:"100%", borderRadius: "25px"}}>
 
-                <img alt={`${name} #${tokenId}`}  onClick={() => router.push(`/nft?contract=${contract}&tokenId=${tokenId}`)} style={{objectFit: "cover"}} src={image} height="auto" width="100%" />
+                <img alt={`${name} #${tokenId}`}  onClick={() => router.push(`/nft?contract=${contract}&tokenId=${tokenId}`)} style={{objectFit: "cover"}} src={image} height="100%" width="100%" />
 
-                <Grid item sx={{marginTop: "1em"}} container spacing={2} justifyContent="center">
+                <Box sx={{position: "relative", top: "-5em", left: "1em"}}>
 
-                    <Typography sx={{ fontWeight: 700, fontSize: "1.4em"}} variant="body1">{name}</Typography>
+                    <Typography sx={{ fontWeight: 700}} variant="subtitle1">{name} #{tokenId}</Typography>
 
-                </Grid>
+                    <Typography sx={{ fontWeight: 700}} component={"div"} variant="body2"> Price: {tokenId}</Typography>
+
+                </Box>
    
             </Card>
 

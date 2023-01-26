@@ -29,7 +29,7 @@ describe ("NFT card", () => {
 
         const image = screen.getByRole("img")
 
-        const name = screen.getByText(nft.name)
+        const name = screen.getByText(nft.name + " #" + nft.tokenId )
 
         expect(image).toBeInTheDocument()
 

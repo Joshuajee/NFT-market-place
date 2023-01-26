@@ -7,10 +7,50 @@ import { Container } from "@mui/system";
 import { Grid } from "@mui/material";
 import Navbar from "../components/navbar";
 import NFTCard from "../components/cards/NFTCard";
+import Layout from "../components/layout";
 
-export default function Index() {
+export default function Home() {
 
-  const [data, updateData] = useState([]);
+  const [data, updateData] = useState([
+    {
+      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
+      name: "Go lang", 
+      tokenId: "20", 
+      contract: "123k4kgmfkdkfgf" 
+    },
+    {
+      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
+      name: "Go lang", 
+      tokenId: "20", 
+      contract: "123k4kgmfkdkfgf" 
+    },
+    {
+      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
+      name: "Go lang", 
+      tokenId: "20", 
+      contract: "123k4kgmfkdkfgf" 
+    },
+    {
+      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
+      name: "Go lang", 
+      tokenId: "20", 
+      contract: "123k4kgmfkdkfgf" 
+    },
+    {
+      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
+      name: "Go lang", 
+      tokenId: "20", 
+      contract: "123k4kgmfkdkfgf" 
+    },
+    {
+      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
+      name: "Go lang", 
+      tokenId: "20", 
+      contract: "123k4kgmfkdkfgf" 
+    },
+    
+  ]);
+
   const [dataFetched, updateFetched] = useState(false);
 
   async function getAllNFTs() {
@@ -58,23 +98,14 @@ export default function Index() {
   }, [dataFetched])
 
   return (
-    <div>
-      
-      <Navbar  />
+    <Layout>
+      <Grid item container spacing={2} sx={{marginTop: "2em"}}>
+        {
+          data.map((nft, index) => <NFTCard nft={nft} key={index} /> )
+        }
+      </Grid>
 
-      <Container maxWidth="lg">
-
-        <Grid item container spacing={2} sx={{marginTop: "2em"}}>
-
-          {
-            data.map((nft, index) => <NFTCard nft={nft} key={index} /> )
-          }
-
-        </Grid>
-
-      </Container>
-          
-    </div>
+    </Layout>
   );
 
 }

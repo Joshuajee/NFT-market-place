@@ -8,10 +8,7 @@ export const bgColor = "#2690E2";
 // Create a theme instance.
 const theme = createTheme({
   palette: {
-    background: {
-
-    },
-
+    mode: 'dark',
   },
   typography: {
 

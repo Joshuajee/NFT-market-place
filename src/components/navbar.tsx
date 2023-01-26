@@ -39,51 +39,29 @@ export default function NavBar(props: Props) {
 
     return (
         <React.Fragment>
-
             <ElevationScroll {...props}>
-
                 <AppBar>
-
                     <Toolbar>
-
                         <Grid container>
-
                             <Grid item md={2}> 
                                 <Typography variant='h6' sx={{fontWeight: 700, lineHeight: 2.5}}>  JEE Marketplace </Typography>                            
                             </Grid>
-
                             <Grid item md={5}>
-
                                 <Search />
-
                             </Grid>
-
                             <Grid item md={5}>
-
                                 <Grid container sx={{color: "white"}} justifyContent="flex-end">
-
                                     <Link className={styles.link} sx={{color: "white"}} href="/"> MarketPlace </Link>
-
                                     <Link className={styles.link} sx={{color: "white"}} href="/list-nft"> List NFT </Link>
-
                                     <Link className={styles.link} sx={{color: "white"}} href="/profile"> Profile </Link>
-                    
                                     <ConnectionBtn />
-
                                 </Grid>
-
                             </Grid>
-
                         </Grid>
-
                     </Toolbar>
-
                 </AppBar>
-
             </ElevationScroll>
-
             <Toolbar />
-
         </React.Fragment>
     );
 }
