@@ -1,0 +1,28 @@
+.link {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    text-decoration: none;
+    line-height: 3em;
+    font-weight: 700;
+}
+
+.connect {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.search {
+    width: 400px;
+}
+
+@media screen and (max-width: 600px) {
+    .link {
+        width: 100%;
+        display: none;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+}

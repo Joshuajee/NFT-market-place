@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+import { IterableMapping } from "./liberies/IterableMapping.sol";
 
 error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
 error ItemNotForSale(address nftAddress, uint256 tokenId);
@@ -18,6 +20,10 @@ error PriceMustBeAboveZero();
 contract NftMarketplace is ReentrancyGuard {
 
     using Counters for Counters.Counter;
+
+    using IterableMapping for IterableMapping.Map;
+
+    IterableMapping.Map private map;
 
     Counters.Counter private listedTokenIds;
 

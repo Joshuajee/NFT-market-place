@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Storage.sol";
@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract MyToken is IERC2981, ERC721, ERC721Enumerable, ERC721URIStorage,  ERC165Storage, Ownable {
+contract NFTToken is IERC2981, ERC721, ERC721Enumerable, ERC721URIStorage,  ERC165Storage, Ownable {
 
     using Counters for Counters.Counter;
 
@@ -83,9 +83,9 @@ contract MyToken is IERC2981, ERC721, ERC721Enumerable, ERC721URIStorage,  ERC16
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
-        override(ERC721, ERC721Enumerable)
+        override(ERC721, ERC721Enumerable, ERC165)
     {
-        super._beforeTokenTransfer(from, to, tokenId);
+        super._beforeTokenTransfer(from, to, tokenId, 1);
     }
 
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
@@ -109,5 +109,7 @@ contract MyToken is IERC2981, ERC721, ERC721Enumerable, ERC721URIStorage,  ERC16
     {
         return super.supportsInterface(interfaceId);
     }
+
+
     
 }
