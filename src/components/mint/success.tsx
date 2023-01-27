@@ -1,6 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
-import Toast, { ALERT_TYPES } from "../alerts";
+import Toast, { ALERT_TYPES } from "../app/alerts";
 import { Button, Typography } from "@mui/material";
 import { ThumbUp } from '@mui/icons-material';
 

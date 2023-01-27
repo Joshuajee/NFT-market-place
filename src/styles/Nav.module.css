@@ -15,10 +15,21 @@
     width: 400px;
 }
 
+.phone_only {
+    display: none;
+}
+
 @media screen and (max-width: 600px) {
+    .hide {
+        display: none;
+    }
     .link {
         width: 100%;
         display: none;
+    }
+
+    .phone_only {
+        display: block;
     }
 
     .search {

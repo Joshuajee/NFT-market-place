@@ -1,5 +1,5 @@
 import axios from "axios";
-import NavBar from "../components/navbar";
+import NavBar from "../components/app/navbar";
 import abi from "../libs/abi.json";
 import nftAbi from "../libs/nftAbi.json";
 import { ethers }   from "ethers";
