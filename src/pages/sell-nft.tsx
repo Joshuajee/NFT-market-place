@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import NavBar from "../components/navbar";
+import NavBar from "../components/app/navbar";
 import { Button, Container, Grid } from "@mui/material";
 import Modal from "../components/mint/modal";
 import NFTCard from "../components/cards/NFTCard";
@@ -18,9 +18,9 @@ export default function ListNFT () {
 
     const getNFTs = async () => {
 
-        const res = (await getNft(address))
+        // const res = (await getNft(address))
 
-        console.log(res)
+        // console.log(res)
 
         //setNFTs(res.data.ownedNfts)
 

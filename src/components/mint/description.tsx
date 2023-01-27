@@ -2,7 +2,7 @@ import { LoadingButton } from "@mui/lab";
 import { FormControl, TextField } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";;
-import Toast, { ALERT_TYPES } from "../alerts";
+import Toast, { ALERT_TYPES } from "../app/alerts";
 
 
 interface IProps {
