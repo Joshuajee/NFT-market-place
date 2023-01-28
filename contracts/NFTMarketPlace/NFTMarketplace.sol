@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import { IterableMapping } from "./liberies/IterableMapping.sol";
+import { IterableMapping } from "../liberies/IterableMapping.sol";
 
 error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
 error ItemNotForSale(address nftAddress, uint256 tokenId);
@@ -17,7 +17,7 @@ error NotOwner();
 error NotApprovedForMarketplace();
 error PriceMustBeAboveZero();
 
-contract NftMarketplace is ReentrancyGuard {
+contract NFTMarketplace is ReentrancyGuard {
 
     using Counters for Counters.Counter;
 
@@ -25,7 +25,7 @@ contract NftMarketplace is ReentrancyGuard {
 
     IterableMapping.Map private map;
 
-    Counters.Counter private listedTokenIds;
+    Counters.Counter public listedTokenIds;
 
     bytes4 private constant _INTERFACE_ID_ERC2981 = 0x2a55205a;
     address private constant NULL_ADDRESS = 0x0000000000000000000000000000000000000000;

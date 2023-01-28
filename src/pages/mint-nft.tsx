@@ -9,7 +9,7 @@ import Navbar from "../components/app/navbar";
 import NFTCard from "../components/cards/NFTCard";
 import Layout from "../components/app/layout";
 
-export default function Home() {
+export default function MintNFT() {
 
   const [data, updateData] = useState([
     {
@@ -48,18 +48,6 @@ export default function Home() {
       tokenId: "20", 
       contract: "123k4kgmfkdkfgf" 
     },
-    {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
-      name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
-    },
-    {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
-      name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
-    }
     
   ]);
 

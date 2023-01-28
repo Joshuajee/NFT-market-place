@@ -2,6 +2,12 @@ import { findAllByRole, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Menu from './menu';
 
+jest.mock("./../connection/button", () => {
+    return () => {
+        return "Connection Button"
+    }
+})
+
 
 const renderComponent = () => {
     render(<Menu open={true} />);
@@ -13,20 +19,19 @@ describe ("Testing Side Menu", () => {
 
         render(<Menu open={false} />);
 
-        //expect(screen.findAllByRole("link")).toThrowError()
+        //expect(screen.queryAllByRole("link")).not.toBeInTheDocument()
 
     })
 
-    it("Has 3 links", () => {
+    it("Has 4 links", () => {
 
         renderComponent()
 
         const links = screen.getAllByRole("link")
 
-        expect(links.length).toBe(3)
+        expect(links.length).toBe(4)
 
     })
-
 
 
     it("Marketplace link has the correct href", () => {
@@ -34,7 +39,7 @@ describe ("Testing Side Menu", () => {
         renderComponent()
 
         const link = screen.getByRole("link", {
-            name: /marketplace/i
+            name: /market place/i
         })
 
         expect(link).toHaveAttribute('href', '/');
@@ -46,10 +51,10 @@ describe ("Testing Side Menu", () => {
         renderComponent()
 
         const link = screen.getByRole("link", {
-            name: /profile/i
+            name: /my profile/i
         })
 
-        expect(link).toHaveAttribute('href', '/profile');
+        expect(link).toHaveAttribute('href', '/my-profile');
 
     })
 
@@ -63,6 +68,18 @@ describe ("Testing Side Menu", () => {
         })
 
         expect(link).toHaveAttribute('href', '/sell-nft');
+
+    })
+
+    it("Mint NFT link has the correct href", () => {
+
+        renderComponent()
+
+        const link = screen.getByRole("link", {
+            name: /Mint NFT/i
+        })
+
+        expect(link).toHaveAttribute('href', '/mint-nft');
 
     })
 

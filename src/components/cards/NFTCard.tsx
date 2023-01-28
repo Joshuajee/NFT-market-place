@@ -14,11 +14,11 @@ const NFTCard = (props: IProps) => {
     const router = useRouter()
 
     return (
-        <Grid item xs={12} sm={6} md={4} lg={4} >
+        <Grid item xs={12} sm={6} md={4} lg={3} >
 
             <Card sx={{height: "100%", width:"100%", borderRadius: "25px"}}>
 
-                <img alt={`${name} #${tokenId}`}  onClick={() => router.push(`/nft?contract=${contract}&tokenId=${tokenId}`)} style={{objectFit: "cover"}} src={image} height="100%" width="100%" />
+                <img alt={`${name} #${tokenId}`}  onClick={() => router.push(`/nft?contract=${contract}&tokenId=${tokenId}`)} style={{objectFit: "cover", cursor: "pointer"}} src={image} height="100%" width="100%" />
 
                 <Box sx={{position: "relative", top: "-5em", left: "1em"}}>
 
