@@ -7,16 +7,11 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import styles from "../styles/Pages.module.css";
 import { LoadingButton } from "@mui/lab";
-import Toast, { ALERT_TYPES } from "../components/app/alerts";
 import Layout from "../components/app/layout";
 
 const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
 export default function NFT () {
-
-    const [message, setMessage] = useState('');
-    const [toast, setToast] = useState(false);
-    const [messageType, setMessageType] = useState<ALERT_TYPES>(null);
 
     const [NFT, setNFT] = useState<any>(null)
     const [loading, setLoading] = useState(false);
@@ -80,16 +75,10 @@ export default function NFT () {
             const transaction = await contract.buyItem(nftAddress, tokenId, {value:salePrice});
             
             await transaction.wait();
-
-            setMessage('You successfully bought the NFT!')
-            setMessageType(null)
-            setToast(true)
         
         }   catch(e) {
             console.error(e)
-            setMessage("An error occurred")
-            setMessageType("error")
-            setToast(true)
+ 
         }
 
         setLoading(false)

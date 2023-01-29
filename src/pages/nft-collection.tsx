@@ -5,7 +5,6 @@ import { Button, Container, Grid } from "@mui/material";
 import Modal from "../components/mint/modal";
 import NFTCard from "../components/cards/NFTCard";
 import axios from "axios";
-import { getAddress } from "../libs/utils";
 import NFTListCard from "../components/cards/NFTListCard";
 
 
@@ -25,9 +24,6 @@ export default function CollectionNFT () {
 
     }
 
-    useEffect(() => {
-        getAddress(setAddress)
-    }, [])
 
     useEffect(() => {
         if (address) getNFTs()

@@ -19,21 +19,79 @@
     display: none;
 }
 
-@media screen and (max-width: 600px) {
+.tablet_only {
+    display: none;
+}
+
+.desktop_only {
+    display: none;
+}
+
+.search_bg {
+    position: fixed; 
+    top: 0;
+    left: 0; 
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+.hide_lg {
+    display: none;
+}
+
+/*- Mobile Screen */
+@media screen and (max-width: 740px) {
+
+    .phone_only {
+        display: flex;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+    .hide_mobile {
+        display: none;
+    }
+
+
+}
+
+
+
+/*- Tablet Screen */
+@media screen and (max-width: 900px) {
+
+    .hide_tablet {
+        display: none;
+    }
+
+    .tablet_only {
+        display: flex;
+    }
+
+}
+
+
+/*- Smaill Desktop Screen */
+@media screen and (max-width: 1200px) {
+
     .hide {
         display: none;
     }
+
+    .hide_lg {
+        display: flex;
+    }
+
     .link {
         width: 100%;
         display: none;
     }
 
-    .phone_only {
-        display: block;
-    }
-
-    .search {
-        width: 100%;
+    .desktop_only {
+        display: flex;
     }
 
 }

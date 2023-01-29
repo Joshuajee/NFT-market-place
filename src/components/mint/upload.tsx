@@ -2,7 +2,6 @@
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
 import { useRef, useState } from "react";
-import Toast, { ALERT_TYPES } from "../app/alerts";
 
 
 interface IProps {
@@ -15,9 +14,7 @@ const Upload = (props: IProps) => {
 
   const { selectedImage, setSelectedImage, setStage } = props;
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<ALERT_TYPES>(null);
-  const [toast, setToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
+
 
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -53,9 +50,7 @@ const Upload = (props: IProps) => {
         setStage(1)
 
     } catch (error) {
-        setStatus("error")
-        setToast(true)
-        setToastMsg("An error occured")
+
     }
 
     setLoading(false)
@@ -117,7 +112,7 @@ const Upload = (props: IProps) => {
                         > Upload 
                     </LoadingButton> )
             }
-            <Toast type={status} open={toast} setOpen={setToast} message={toastMsg} />
+
         </div>
     );
 };

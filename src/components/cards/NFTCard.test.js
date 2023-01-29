@@ -55,8 +55,6 @@ describe ("NFT card", () => {
 
         const image = screen.getByRole("img")
 
-        mockRouter.push("/initial-path");
-
         fireEvent.click(image)
 
         expect(mockRouter).toMatchObject({ 

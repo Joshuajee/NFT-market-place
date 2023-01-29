@@ -5,9 +5,7 @@ import { Button, Container, Grid } from "@mui/material";
 import Modal from "../components/mint/modal";
 import NFTCard from "../components/cards/NFTCard";
 import axios from "axios";
-import { getAddress } from "../libs/utils";
 import NFTListCard from "../components/cards/NFTListCard";
-import { getNft } from "../libs/contracts";
 
 export default function ListNFT () {
 
@@ -27,11 +25,11 @@ export default function ListNFT () {
     }
 
     useEffect(() => {
-        getAddress(setAddress)
+        //getAddress(setAddress)
     }, [])
 
     useEffect(() => {
-        if (address) getNFTs()
+        //if (address) getNFTs()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
 
@@ -39,32 +37,20 @@ export default function ListNFT () {
 
     return (
         <div>
-
             <NavBar />
-
             <Container maxWidth="lg">
-
                 <Grid container spacing={2} sx={{marginTop: "2em"}}>
-
                     <Grid container justifyContent={"center"}> 
                         <Button onClick={() => setShowModal(true)} variant="contained">Mint NFT</Button>
                     </Grid>
-
                 </Grid>
-
-
                 <Grid container spacing={2} sx={{marginTop: "2em"}}>
-
                     {
                         NFTs.map((nft: any, index: number) => <NFTListCard nft={nft} key={index} /> )
                     }
-
                 </Grid>
-
             </Container>
-
             <Modal open={showModal} setOpen={setShowModal} />
-
         </div>
     )
 }

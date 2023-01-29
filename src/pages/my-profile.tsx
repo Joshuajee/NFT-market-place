@@ -6,7 +6,7 @@ import { ethers }   from "ethers";
 import { useEffect, useState } from "react";
 import { Container, Grid, Typography } from "@mui/material";
 import NFTCard from "../components/cards/NFTCard";
-import { getAddress, truncateAddress } from "../libs/utils";
+
 
 const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
@@ -71,7 +71,6 @@ export default function Profile () {
         getNFTData();
     }, [])
 
-    console.log(address)
 
     return (
         <div>

@@ -2,8 +2,6 @@ import { LoadingButton } from "@mui/lab";
 import { FormControl, TextField } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";;
-import Toast, { ALERT_TYPES } from "../app/alerts";
-
 
 interface IProps {
     setStage: (number: number) => void;
@@ -18,9 +16,6 @@ const Description = (props: IProps) => {
     const { name, description, setName, setDescription } = props
 
     const [loading, setLoading] = useState(false)
-    const [status, setStatus] = useState<ALERT_TYPES>(null);
-    const [toast, setToast] = useState(false);
-    const [toastMsg, setToastMsg] = useState("");
 
 
     const uploadData = async () => {
@@ -42,9 +37,7 @@ const Description = (props: IProps) => {
             props.setStage(2)
             
         } catch (error) {
-            setStatus("error")
-            setToast(true)
-            setToastMsg("An error occured")
+
         }
     
         setLoading(false)
@@ -79,8 +72,6 @@ const Description = (props: IProps) => {
                 loading={loading}
                 loadingIndicator={"Uploading..."}> Upload
             </LoadingButton> 
-
-            <Toast type={status} open={toast} setOpen={setToast} message={toastMsg} />
 
         </FormControl>
     );
