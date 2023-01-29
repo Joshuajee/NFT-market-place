@@ -2,7 +2,6 @@
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
 import { useRef, useState } from "react";
-import Toast, { ALERT_TYPES } from "../app/alerts";
 
 
 interface IProps {
@@ -117,7 +116,7 @@ const Upload = (props: IProps) => {
                         > Upload 
                     </LoadingButton> )
             }
-            <Toast type={status} open={toast} setOpen={setToast} message={toastMsg} />
+
         </div>
     );
 };

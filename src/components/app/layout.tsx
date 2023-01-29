@@ -1,4 +1,4 @@
-import React, { ReactComponentElement, ReactHTMLElement, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { Box, Container, Grid } from '@mui/material';
 import Navbar from "./navbar"
 

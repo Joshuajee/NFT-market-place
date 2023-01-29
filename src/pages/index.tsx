@@ -37,7 +37,7 @@ export default function Home() {
       contract: "123k4kgmfkdkfgf" 
     },
     {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
+      image: "https://nft-cdn.alchemy.com/matic-mumbai/a04be25f014165ea518e797d8f7115cc", 
       name: "Go lang", 
       tokenId: "20", 
       contract: "123k4kgmfkdkfgf" 
@@ -49,7 +49,7 @@ export default function Home() {
       contract: "123k4kgmfkdkfgf" 
     },
     {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
+      image: "https://nft-cdn.alchemy.com/matic-mumbai/a04be25f014165ea518e797d8f7115cc", 
       name: "Go lang", 
       tokenId: "20", 
       contract: "123k4kgmfkdkfgf" 

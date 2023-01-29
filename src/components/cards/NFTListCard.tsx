@@ -6,18 +6,18 @@ import React, { useState } from "react"
 import { ethers } from "ethers";
 import abi from "../../libs/abi.json";
 import nftAbi from "../../libs/nftAbi.json";
+import { NFT_COLLECTION } from "../../libs/intefaces";
 
 interface IProps {
-    nft: any
+    nft: NFT_COLLECTION
 }
-
 const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
 const NFTListCard = (props: IProps) => {
 
-    const { image, name } = props.nft?.rawMetadata
+    const { media, contract, title, tokenId } = props.nft
 
-    const { tokenId, contract } = props.nft
+    const { gateway } = media[0]
 
     const [loading, setLoading] = useState(false)
 
@@ -77,21 +77,17 @@ const NFTListCard = (props: IProps) => {
     }
 
     return (
-        <Grid item xs={12} sm={6} md={4} lg={4} >
+        <Grid item xs={12} sm={6} md={4} lg={3} >
 
-            <Card sx={{height: "30em", borderRadius: "10px"}}>
+            <Card sx={{ borderRadius: "10px", height: "calc(100% - 2.2em)" }}>
 
-                <img alt={`${name} #${tokenId}`} style={{objectFit: "cover"}} src={image} height="auto" width="100%" />
+                <img alt={`${title} #${tokenId}`} style={{objectFit: "cover", cursor: "pointer", width: "100%", aspectRatio: 1 / 1 }} src={gateway} height="auto" width="100%" />
 
-                <Grid item sx={{marginTop: "1em"}} container spacing={2} justifyContent="center">
+                <Box sx={{position: "relative", top: "-3em", left: "0.6em"}} >
 
-                    <Typography sx={{ fontWeight: 700, fontSize: "1.4em"}} variant="body1">{name}</Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: "1em"}} variant="body1">{title}</Typography>
 
-                    <Grid container justifyContent={"center"}>
-                        <LoadingButton loading={loading} loadingIndicator="Loading..." onClick={() => listNFT(contract.address, tokenId, 0.01)} variant="contained"> List NFT to Market </LoadingButton>
-                    </Grid>
-
-                </Grid>
+                </Box>
    
             </Card>
 

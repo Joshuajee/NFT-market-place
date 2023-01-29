@@ -1,10 +1,8 @@
 import Image from 'next/image';
-import { useConnect } from 'wagmi'
+import { Connector, useConnect } from 'wagmi'
 import { toast } from 'react-toastify'
-import PropTypes from 'prop-types';
-import { Box, Button, Card, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { width } from '@mui/system';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -19,14 +17,19 @@ const Item = styled(Paper)(({ theme }) => ({
     "&hover" : {}
 }));
 
+interface IProps {
+    connector: Connector
+}
 
-const Wallet = ({connector}) => {
+const Wallet = (props: IProps) => {
+
+    const { connector } = props
 
     const { connect, error  } = useConnect()
 
-    if (error) toast(error)
+    if (error) toast(error.message)
 
-    const icon = (id) => {
+    const icon = (id: string) => {
         switch(id) {
             case "walletConnect":
                 return  <Image alt={connect.name} src="/icons/walletconnect-logo.png" height={50} width={50} />
@@ -49,11 +52,6 @@ const Wallet = ({connector}) => {
             </Item>
     )
 }
-
-
-Wallet.propTypes = {
-    connector: PropTypes.object.isRequired
-};
 
 
 export default Wallet

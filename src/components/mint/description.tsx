@@ -2,8 +2,6 @@ import { LoadingButton } from "@mui/lab";
 import { FormControl, TextField } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";;
-import Toast, { ALERT_TYPES } from "../app/alerts";
-
 
 interface IProps {
     setStage: (number: number) => void;
@@ -79,8 +77,6 @@ const Description = (props: IProps) => {
                 loading={loading}
                 loadingIndicator={"Uploading..."}> Upload
             </LoadingButton> 
-
-            <Toast type={status} open={toast} setOpen={setToast} message={toastMsg} />
 
         </FormControl>
     );

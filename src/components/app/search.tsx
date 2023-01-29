@@ -4,6 +4,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import styles from "./../../styles/Nav.module.css";
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { verifyAddress } from '../../libs/utils';
+import { toast } from 'react-toastify';
+import { searchCollection } from '../../libs/alchemy';
 
 interface IProps {
     show?: boolean;
@@ -14,11 +17,13 @@ export default function Search(props: IProps) {
 
     const router = useRouter()
 
-    const [contractAddress, setContractAddress] = React.useState('')
+    const [collectionAddress, setcollectionAddress] = React.useState('')
     
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const [result, setResult] = React.useState<any>(null);
+
+    const [disabled, setDisabled] = React.useState(true);
 
     const [loading, setLoading] = React.useState(false);
 
@@ -31,24 +36,27 @@ export default function Search(props: IProps) {
     };
 
     const search = async () => {
-
+        setResult(null)
         setAnchorEl(ref.current)
-
         setLoading(true)
 
-        try {
+        const result =  await searchCollection(collectionAddress)
 
-            const res = await axios.get(`/api/search?contractAddress=${contractAddress}`)
-
-            setResult(res?.data?.data)
-
-        } catch (e) {
-            console.error(e)
+        if (result.status)
+            setResult(result.data)
+        else {
+            toast.error(result.error)
+            setAnchorEl(null)
         }
 
         setLoading(false)
 
     }
+
+    React.useEffect(() => {
+        if (verifyAddress(collectionAddress)) setDisabled(false)
+        else setDisabled(true)
+    }, [collectionAddress])
 
 
     return (
@@ -75,11 +83,11 @@ export default function Search(props: IProps) {
                         sx={{ ml: 1, flex: 1 }}
                         placeholder="Search Collection address"
                         inputProps={{ 'aria-label': 'Search Collection address' }}
-                        onChange={(e) => setContractAddress(e.target.value)}
+                        onChange={(e) => setcollectionAddress(e.target.value)}
                         autoFocus={props.show ? true: false}
                     />
 
-                    <IconButton onClick={search} type="button" sx={{ p: '10px' }} aria-label="search">
+                    <IconButton disabled={disabled} onClick={search} type="button" sx={{ p: '10px' }} aria-label="search">
                         <SearchIcon  />
                     </IconButton>
 
@@ -91,7 +99,7 @@ export default function Search(props: IProps) {
                         sx={{marginTop: '2em'}}
                         MenuListProps={{'aria-labelledby': 'basic-button'}}>
 
-                        <MenuItem sx={{width: 390}}> Collections </MenuItem>
+                        <Typography variant='h6' sx={{p: 1}}> Collections </Typography>
 
                         <Divider />
 
@@ -110,7 +118,7 @@ export default function Search(props: IProps) {
                                 result && (
                                     <Grid item container onClick={() => {
                                         setAnchorEl(null)
-                                        router.push(`/collection?contract=${contractAddress}`)
+                                        router.push(`/collection/${collectionAddress}`)
                                     }}>
                                         <Grid item xs={12}>  <Typography variant='h6'> {    result.name }   </Typography> </Grid>   
                                         <Grid item xs={12}>  <Typography variant='subtitle2'> Total Supply: {    result.totalSupply  }</Typography> </Grid>   
@@ -123,13 +131,10 @@ export default function Search(props: IProps) {
 
                     </Menu>
 
-
                     <Grid item container>
                         <div ref={ref}></div>
                     </Grid>
-
                 </Grid>
-                
             </Paper>
         </Box>
     );

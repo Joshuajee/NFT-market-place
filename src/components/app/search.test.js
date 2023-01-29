@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Search from './search';
 
+
 describe ("Search Bar Test", () => {
 
     it("Has Input Field and Button", () => {
@@ -59,13 +60,20 @@ describe ("Search Bar Test", () => {
 
     })
 
-    it("Search Button shows Search result dropdown menu when clicked", () => {
+
+    it("Clicking Search Button will only shows 'Search result dropdown menu' when there is valid address", () => {
 
         render(<Search  />);
 
         const button = screen.getByRole("button", {
             name: "search"
         })
+
+        const search = screen.getByRole("textbox", {
+            name: "Search Collection address"
+        })
+
+        fireEvent.change(search, { target:{ value: "0x0eca8fc72a016d6ea1b036a96dc05072c08a04fe" } })
 
         fireEvent.click(button)
 

@@ -6,12 +6,12 @@ import { ScreenRotation } from '@mui/icons-material';
 const renderComponent = () => {
 
     const nft = {
-        rawMetadata: {
-            image: "joshua",
-            name: "Golang"
-        },
-        tokenId: 30, 
-        contract: "909049030303030"
+        media: [{gateway: "https://nft-cdn.alchemy.com/matic-mumbai/a04be25f014165ea518e797d8f7115cc"}],
+        contract: {
+            address: "00000000"
+        }, 
+        title: "Joshua", 
+        tokenId: "1"
     }
 
     render(<NFTListCard nft={nft}  />);
@@ -27,7 +27,7 @@ describe ("NFT list cards", () => {
 
         const image = screen.getByRole("img")
 
-        const name = screen.getByText(nft.rawMetadata.name)
+        const name = screen.getByText(nft.title)
 
         expect(image).toBeInTheDocument()
 
@@ -41,9 +41,9 @@ describe ("NFT list cards", () => {
 
         const image = screen.getByRole("img")
 
-        expect(image.src).toContain(nft.rawMetadata.image)
+        expect(image.src).toContain(nft.media[0].gateway)
 
-        expect(image.alt).toContain(nft.rawMetadata.name + " " + "#" + nft.tokenId)
+        expect(image.alt).toContain(nft.title + " " + "#" + nft.tokenId)
 
     })
 
