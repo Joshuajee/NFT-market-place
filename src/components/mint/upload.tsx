@@ -14,9 +14,7 @@ const Upload = (props: IProps) => {
 
   const { selectedImage, setSelectedImage, setStage } = props;
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<ALERT_TYPES>(null);
-  const [toast, setToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
+
 
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -52,9 +50,7 @@ const Upload = (props: IProps) => {
         setStage(1)
 
     } catch (error) {
-        setStatus("error")
-        setToast(true)
-        setToastMsg("An error occured")
+
     }
 
     setLoading(false)

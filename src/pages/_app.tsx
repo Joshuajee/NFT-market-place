@@ -76,7 +76,7 @@ export default function MyApp(props: MyAppProps) {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Component {...pageProps}  />
-          <ToastContainer />
+          <ToastContainer theme="dark" position='bottom-right'/>
         </ThemeProvider>
       </CacheProvider>
     </WagmiConfig>

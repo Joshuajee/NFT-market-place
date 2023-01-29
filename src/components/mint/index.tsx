@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { TextField, Typography } from "@mui/material";
 import { ethers } from 'ethers';
 import nftAbi from "../../libs/nftAbi.json";
-import { getAddress } from "../../libs/utils";
 
 
 interface IProps {
@@ -15,9 +14,6 @@ interface IProps {
 const Mint = (props: IProps) => {
 
     const [loading, setLoading] = useState(false);
-    const [status, setStatus] = useState<ALERT_TYPES>(null);
-    const [toast, setToast] = useState(false);
-    const [toastMsg, setToastMsg] = useState("");
     const [address, setAddress] = useState<string | null>(null);
     const [royalty, setRoyalty] = useState <number | null> (null);
 
@@ -49,18 +45,12 @@ const Mint = (props: IProps) => {
             setStage(3)
 
         } catch(e) {
-            //alert( "Upload error"+e )
-            setToastMsg("e?.message")
+
         }
 
         setLoading(false)
 
     }
-
-    useEffect(() => {
-        getAddress(setAddress);
-    }, [])
-
 
     const handleClick = async () => {
         setLoading(true)
@@ -70,7 +60,7 @@ const Mint = (props: IProps) => {
             console.log(res)
             setStage(3)
         } catch (e: any) {
-            setToastMsg(e?.message)
+ 
         }
         
         setLoading(false)

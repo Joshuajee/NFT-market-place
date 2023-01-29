@@ -34,11 +34,11 @@ export default function Collection () {
             }
         } else {
 
-            toast.error("Invalid Collection Address, Redirecting")
+            toast.error("Invalid Collection Address, Redirecting...")
 
             setTimeout(() => {
                 router.push(ROUTES.MARKET_PLACE)
-            }, 4000)
+            }, 6000)
         }
     }
 
