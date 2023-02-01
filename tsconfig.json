@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/cards/NFTListCard.test.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/cards/NFTListCard.test.js", "src/hooks/use-ipfs.js", "src/hooks/use-ipfs-factory.js", "src/components/ui/test.jsx", "src/components/cards/NFTViewCard.test.js"],
   "exclude": ["node_modules"]
 }

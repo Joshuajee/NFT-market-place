@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
-import { ethers } from "ethers";
+import { useCallback, useEffect, useState } from "react";
 import NavBar from "../components/app/navbar";
 import { Button, Container, Grid } from "@mui/material";
-import Modal from "../components/mint/modal";
-import NFTCard from "../components/cards/NFTCard";
 import axios from "axios";
-import NFTListCard from "../components/cards/NFTListCard";
+import NFTViewCard from "../components/cards/NFTViewCard";
 
 
 export default function WalletNFT () {
@@ -40,21 +37,14 @@ export default function WalletNFT () {
     // }
 
 
-    const getNFTs = async () => {
-
+    const getNFTs = useCallback(async () => {
         const res = (await axios.post(`/api/get-nfts?owner=${address}`)).data
-
         setNFTs(res.data.ownedNfts)
-
-    }
-
+    }, [address]);
 
     useEffect(() => {
         if (address) getNFTs()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [address])
-
-
+    }, [address, getNFTs])
 
     return (
         <div>
@@ -75,14 +65,12 @@ export default function WalletNFT () {
                 <Grid container spacing={2} sx={{marginTop: "2em"}}>
 
                     {
-                        NFTs.map((nft: any, index: number) => <NFTListCard nft={nft} key={index} /> )
+                        NFTs.map((nft: any, index: number) => <NFTViewCard nft={nft} key={index} /> )
                     }
 
                 </Grid>
 
             </Container>
-
-            <Modal open={showModal} setOpen={setShowModal} />
 
         </div>
     )

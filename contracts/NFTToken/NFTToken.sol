@@ -8,7 +8,7 @@
 // import "@openzeppelin/contracts/access/Ownable.sol";
 // import "@openzeppelin/contracts/utils/Counters.sol";
 
-// contract NFTToken is IERC2981, ERC721, ERC721Enumerable, ERC721URIStorage,  ERC165Storage, Ownable {
+// contract ROYALTY_TOKEN is IERC2981, ERC721, ERC721Enumerable, ERC721URIStorage,  ERC165Storage, Ownable {
 
 //     using Counters for Counters.Counter;
 
@@ -83,9 +83,9 @@
 
 //     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
 //         internal
-//         override(ERC721, ERC721Enumerable, ERC165)
+//         override(ERC721, ERC721Enumerable)
 //     {
-//         super._beforeTokenTransfer(from, to, tokenId, 1);
+//         super._beforeTokenTransfer(from, to, tokenId);
 //     }
 
 //     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
@@ -109,7 +109,5 @@
 //     {
 //         return super.supportsInterface(interfaceId);
 //     }
-
-
     
 // }

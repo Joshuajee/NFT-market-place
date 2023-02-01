@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-library IterableMapping {
+library ListingMapping {
+
+    struct MapIndex {
+        address contract;
+        uint tokenId;
+    }
+
     // Iterable mapping from address to uint;
     struct Map {
-        address[] keys;
+        MapIndex[] keys;
         mapping(address => uint) values;
         mapping(address => uint) indexOf;
         mapping(address => bool) inserted;

@@ -43,11 +43,8 @@ const Wallet = (props: IProps) => {
     return (
             <Item>
                 <Box sx={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}} onClick={() => connect({ connector })}>
-                    
                     <div> {icon(connector.id)} </div>
-                    
                     <Typography variant='subtitle2' textAlign={"center"}> {connector.name} </Typography>
-
                 </Box>
             </Item>
     )

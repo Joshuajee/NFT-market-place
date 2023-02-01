@@ -1,69 +1,41 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useContractRead } from 'wagmi';
+import { polygonMumbai } from "wagmi/chains";
 import { ethers } from "ethers";
-import abi from "../libs/nftAbi.json";
-import nftAbi from "../libs/nftAbi.json";
-import { Container } from "@mui/system";
+import abi from "../abi/nftAbi.json";
+import nftAbi from "../abi/nftAbi.json";
 import { Grid } from "@mui/material";
-import Navbar from "../components/app/navbar";
 import NFTCard from "../components/cards/NFTCard";
 import Layout from "../components/app/layout";
+import LoadingBG from "../components/app/loaderBg";
+import { ADDRESS } from "../libs/types";
+
+const contract = String(process.env.NEXT_PUBLIC_CONTRACT)
 
 export default function Home() {
 
-  const [data, updateData] = useState([
-    {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
-      name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
-    },
-    {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
-      name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
-    },
-    {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
-      name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
-    },
-    {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
-      name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
-    },
+  const array = Array(20).fill(
     {
       image: "https://nft-cdn.alchemy.com/matic-mumbai/a04be25f014165ea518e797d8f7115cc", 
       name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
-    },
-    {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
-      name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
-    },
-    {
-      image: "https://nft-cdn.alchemy.com/matic-mumbai/a04be25f014165ea518e797d8f7115cc", 
-      name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
-    },
-    {
-      image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Ball%2C_%E0%B4%AA%E0%B4%A8%E0%B5%8D%E0%B4%A4%E0%B5%8D.JPG", 
-      name: "Go lang", 
-      tokenId: "20", 
-      contract: "123k4kgmfkdkfgf" 
+      tokenId: "0", 
+      contract: "0x0eca8fc72a016d6ea1b036a96dc05072c08a04fe" 
     }
-    
-  ]);
+  );
+
+  const [data, updateData] = useState(array);
 
   const [dataFetched, updateFetched] = useState(false);
+
+  const listings = useContractRead({
+    address: contract as ADDRESS,
+    abi: abi,
+    functionName: 'getAllNFTs',
+    chainId: polygonMumbai.id,
+  })
+
+  console.log(listings.data)
 
   async function getAllNFTs() {
 
@@ -101,22 +73,18 @@ export default function Home() {
 
     }))
 
-    updateFetched(true);
-    updateData(items as any);
+    // updateFetched(true);
+    // updateData(items as any);
   }
 
-  useEffect(() => {
-    //if(!dataFetched) getAllNFTs();
-  }, [dataFetched])
 
   return (
     <Layout>
       <Grid item container spacing={2} sx={{marginTop: "2em"}}>
         {
-          data.map((nft, index) => <NFTCard nft={nft} key={index} /> )
+          data.map((nft, index) =>  <NFTCard nft={nft} key={index} /> )
         }
       </Grid>
-
     </Layout>
   );
 
