@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import NFTListCard from './NFTListCard';
+import NFTViewCard from './NFTViewCard';
 
 
 const renderComponent = () => {
@@ -14,7 +14,7 @@ const renderComponent = () => {
         tokenId: "1"
     }
 
-    render(<NFTListCard nft={nft}  />);
+    render(<NFTViewCard nft={nft}  />);
 
     return nft
 }

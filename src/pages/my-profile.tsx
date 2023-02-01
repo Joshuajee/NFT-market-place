@@ -1,20 +1,23 @@
 import axios from "axios";
-import NavBar from "../components/app/navbar";
-import abi from "../libs/abi.json";
-import nftAbi from "../libs/nftAbi.json";
+import { useAccount } from 'wagmi'
+import Layout from "../components/app/layout";
+import abi from "../abi/abi.json";
+import nftAbi from "../abi/nftAbi.json";
 import { ethers }   from "ethers";
 import { useEffect, useState } from "react";
-import { Container, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import NFTCard from "../components/cards/NFTCard";
+import ConnectScreen from "../components/ui/connectScreen";
 
 
 const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
 export default function Profile () {
 
+    const { isConnected, address } = useAccount()
+
     const [data, updateData] = useState([]);
     const [dataFetched, updateFetched] = useState(false);
-    const [address, updateAddress] = useState("0x");
     const [totalPrice, updateTotalPrice] = useState("0");
 
     async function getNFTData() {
@@ -63,67 +66,51 @@ export default function Profile () {
 
         updateData(items as any);
         updateFetched(true);
-        updateAddress(addr);
         updateTotalPrice(sumPrice.toPrecision(3));
     }
 
     useEffect(() => {
-        getNFTData();
+        //getNFTData();
     }, [])
+
+    const pageContent = (
+        <Box>
+            <Grid item justifyContent={"center"} container> 
+                <Typography sx={{fontWeight: 700, marginTop: "1em"}} textAlign={"center"} variant="h4"> Wallet Address </Typography>
+            </Grid>
+            
+            <Grid item justifyContent={"center"} container> 
+                <Typography variant="body2"> {address} </Typography>
+            </Grid>
+
+            <Grid item justifyContent={"center"} container> 
+                <Grid item xs={1}>
+                    <div>
+                        <h2 className="font-bold">No. of NFTs</h2>
+                        {data.length}
+                    </div>
+                </Grid>
+                <Grid item xs={1}>
+                    <div className="ml-20">
+                        <h2 className="font-bold">Total Value</h2>
+                        {totalPrice} ETH
+                    </div>
+                </Grid>
+            </Grid>
+
+            <Grid container spacing={2} sx={{marginTop: "2em"}}>
+                {
+                    data.map((nft, index) => <NFTCard nft={nft} key={index} /> )
+                }
+            </Grid>
+        </Box>
+    )
 
 
     return (
-        <div>
-
-            <NavBar />
-
-            <Container maxWidth="lg">
-
-                <Grid item justifyContent={"center"} container> 
-
-                    <Typography sx={{fontWeight: 700, marginTop: "1em"}} textAlign={"center"} variant="h4"> Wallet Address </Typography>
-                
-                </Grid>
-
-                <Grid item justifyContent={"center"} container> 
-
-                    <Typography variant="body1"> {address} </Typography>
-
-                </Grid>
-
-                <Grid item justifyContent={"center"} container> 
-
-                    <Grid item xs={1}>
-
-                        <div>
-                            <h2 className="font-bold">No. of NFTs</h2>
-                            {data.length}
-                        </div>
-
-                    </Grid>
-
-                    <Grid item xs={1}>
-
-                        <div className="ml-20">
-                            <h2 className="font-bold">Total Value</h2>
-                            {totalPrice} ETH
-                        </div>
-
-                    </Grid>
-
-                </Grid>
-
-                <Grid container spacing={2} sx={{marginTop: "2em"}}>
-
-                    {
-                        data.map((nft, index) => <NFTCard nft={nft} key={index} /> )
-                    }
-
-                </Grid>
-
-            </Container>
-
-        </div>
+        <Layout>
+            {isConnected ? pageContent : <ConnectScreen />}
+        </Layout>
     )
 };
 

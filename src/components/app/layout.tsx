@@ -12,11 +12,11 @@ export default function Layout(props: IProps) {
 
 
     return (
-        <Grid container sx={{position: "absolute", top: 0, left: 0}}>
+        <Grid container sx={{position: "absolute", top: 0, left: 0, display: "flex", flexDirection: "column"}}>
             <Container maxWidth="lg">
                 <Navbar />
             </Container> 
-            <Box sx={{ width: "100vw", pb: 6 }}>
+            <Box sx={{ pb: 6, flexGrow: 1 }}>
                 <Container maxWidth="lg">
                     {props.children}
                 </Container>

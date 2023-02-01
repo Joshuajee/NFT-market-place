@@ -17,8 +17,6 @@ export const searchCollection = async(contractAddress: string) => {
 
 }
 
-
-
 export const getNFTsByCollection = async (contractAddress: string, pageKey?: null | string) => {
     try {
         const data = await alchemy.nft.getNftsForContract(contractAddress);
@@ -28,7 +26,14 @@ export const getNFTsByCollection = async (contractAddress: string, pageKey?: nul
     } 
 }
 
-
+export const getNFTByTokenId = async (contractAddress: string, tokenId: number) => {
+    try {
+        const data = await alchemy.nft.getNftsForContract(contractAddress);
+        return ({ status: true, data })
+    } catch (e) {
+        return ({ status: false, error: "An error occured" })
+    } 
+}
 
 export const getNFTsByOwner = async(owner: string) => {
     try {
@@ -37,4 +42,5 @@ export const getNFTsByOwner = async(owner: string) => {
     } catch (e) {
         return ({ status: false, error: "An error occured" })
     }
+
 }

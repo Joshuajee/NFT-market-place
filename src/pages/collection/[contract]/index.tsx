@@ -1,16 +1,15 @@
-import { useEffect, useState } from "react";
-import { ethers } from "ethers";
-import NavBar from "../../components/app/navbar";
-import { Button, Container, Grid, Typography } from "@mui/material";
-import Modal from "../../components/mint/modal";
-import NFTCard from "../../components/cards/NFTCard";
-import NFTListCard from "../../components/cards/NFTListCard";
+import { useCallback, useEffect, useState } from "react";
+import { Container, Grid, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { verifyAddress } from "../../libs/utils";
-import { getNFTsByCollection } from "../../libs/alchemy";
+import { verifyAddress } from "../../../libs/utils";
+import { getNFTsByCollection } from "../../../libs/alchemy";
 import { toast } from "react-toastify";
-import { ROUTES } from "../../libs/constants";
-import { NFT_COLLECTION } from "../../libs/intefaces";
+import { ROUTES } from "../../../libs/constants";
+import { NFT_COLLECTION } from "../../../libs/intefaces";
+import Layout from "../../../components/app/layout";
+import LoadingBG from "../../../components/app/loaderBg";
+import NFTViewCard from "../../../components/cards/NFTViewCard";
+
 
 export default function Collection () {
 
@@ -19,11 +18,10 @@ export default function Collection () {
     const contract = router.query.contract
 
     const [NFTs, setNFTs] = useState<any>([])
+    const [initialLoader, setInitialLoader] = useState(true)
     const [pageKey, setPageKey] = useState<any>([])
 
-    const [showModal, setShowModal] = useState(false);
-
-    const getNFTs = async (pageKey: null | string = null) => {
+    const getNFTs = useCallback(async (pageKey: null | string = null) => {
 
         if(verifyAddress(String(contract))) {
             const result = await getNFTsByCollection(String(contract), pageKey)
@@ -40,45 +38,36 @@ export default function Collection () {
                 router.push(ROUTES.MARKET_PLACE)
             }, 6000)
         }
-    }
+
+        setInitialLoader(false)
+    }, [contract, router])
 
     useEffect(() => {
         if (contract) getNFTs()
-    }, [contract])
+    }, [contract, getNFTs])
 
 
     const collection = (
         <Grid container spacing={2} sx={{marginTop: "2em"}}>
             {
-                NFTs.map((nft: NFT_COLLECTION, index: number) => <NFTListCard nft={nft} key={index} /> )
+                NFTs.map((nft: NFT_COLLECTION, index: number) => <NFTViewCard nft={nft} key={index} /> )
             }
         </Grid>
     )
 
 
     return (
-        <div>
-
-            <NavBar />
-
+        <Layout>
             <Container maxWidth="lg">
-
                 <Grid container spacing={2} sx={{marginTop: "2em"}}>
-
                     <Grid container justifyContent={"center"}> 
                         <Typography variant="h6"></Typography>
                     </Grid>
-
                 </Grid>
-
                 {
-                    NFTs.length != 0 ? collection : ""
+                    initialLoader ? <LoadingBG /> : NFTs.length != 0 ? collection : ""
                 }   
-
             </Container>
-
-            <Modal open={showModal} setOpen={setShowModal} />
-
-        </div>
+        </Layout>
     )
 }

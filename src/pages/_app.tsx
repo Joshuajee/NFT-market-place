@@ -18,7 +18,7 @@ import { ToastContainer } from 'react-toastify';
 import AOS from 'aos'
 import 'aos/dist/aos.css';
 import 'react-toastify/dist/ReactToastify.css';
- 
+
 
 const { chains, provider, webSocketProvider } = configureChains(
   [polygonMumbai],
@@ -66,6 +66,14 @@ interface MyAppProps extends AppProps {
 export default function MyApp(props: MyAppProps) {
 
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+
+  React.useEffect(() => {
+    import("@lottiefiles/lottie-player");
+  }, [])
+
+  React.useEffect(() => {
+    AOS.init({ duration: 500 });
+  }, [])
 
   return (
     <WagmiConfig client={client}>

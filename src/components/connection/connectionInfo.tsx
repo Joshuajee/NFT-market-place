@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { useDisconnect } from 'wagmi'
-import { styled, alpha } from '@mui/material/styles';
 import { toast } from 'react-toastify'
 import truncAddress from 'truncate-eth-address'
-import Menu, { MenuProps } from '@mui/material/Menu';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import  {  MdContentCopy } from 'react-icons/md'
 import Dropdown from '../ui/dropdown';

@@ -6,8 +6,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import { IterableMapping } from "../liberies/IterableMapping.sol";
-
 error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
 error ItemNotForSale(address nftAddress, uint256 tokenId);
 error NotListed(address nftAddress, uint256 tokenId);
@@ -17,15 +15,7 @@ error NotOwner();
 error NotApprovedForMarketplace();
 error PriceMustBeAboveZero();
 
-contract NFTMarketplace is ReentrancyGuard {
-
-    using Counters for Counters.Counter;
-
-    using IterableMapping for IterableMapping.Map;
-
-    IterableMapping.Map private map;
-
-    Counters.Counter public listedTokenIds;
+contract NftMarketplace is ReentrancyGuard {
 
     bytes4 private constant _INTERFACE_ID_ERC2981 = 0x2a55205a;
     address private constant NULL_ADDRESS = 0x0000000000000000000000000000000000000000;
@@ -42,13 +32,6 @@ contract NFTMarketplace is ReentrancyGuard {
         address NFTcontract;
         address seller;
         uint256 price;
-    }
-
-    // The structure of store info about a listed token
-    struct ListedTokenOutput {
-        uint256 total;
-        uint256 nextIndex;
-        ListedToken[] tokens;
     }
 
     event ItemListed(
@@ -73,7 +56,9 @@ contract NFTMarketplace is ReentrancyGuard {
 
     // State Variabless
     mapping(address => mapping(uint256 => ListToken)) private s_listings;
-    mapping(uint256 => ListedToken) private i_listings;
+    mapping(address => uint256) private s_noOftokenListed;
+
+    ListedToken[] private i_listings;
     
     // Function modifiers
     modifier notListed(address nftAddress, uint256 tokenId, address owner) {
@@ -114,13 +99,13 @@ contract NFTMarketplace is ReentrancyGuard {
             revert NotApprovedForMarketplace();
         }
 
-        listedTokenIds.increment();
-
-        uint256 newTokenId = listedTokenIds.current();
+        uint256 newTokenId = i_listings.length;
 
         s_listings[nftAddress][tokenId] = ListToken(price, msg.sender, newTokenId);
 
-        i_listings[newTokenId] = ListedToken(tokenId, nftAddress, msg.sender, price);
+        i_listings.push(ListedToken(tokenId, nftAddress, msg.sender, price));
+
+        s_noOftokenListed[msg.sender] += 1;
         
         emit ItemListed(msg.sender, nftAddress, tokenId, price);
     
@@ -139,7 +124,9 @@ contract NFTMarketplace is ReentrancyGuard {
 
         uint256 id = s_listings[nftAddress][tokenId].index;
         delete (s_listings[nftAddress][tokenId]);
-        delete (i_listings[id]);
+
+        // remove from list
+        removeFromList(id);
 
         emit ItemCanceled(msg.sender, nftAddress, tokenId);
     }
@@ -184,20 +171,21 @@ contract NFTMarketplace is ReentrancyGuard {
         require(success, "Transfer failed");
 
         uint256 id = s_listings[nftAddress][tokenId].index;
+
         delete (s_listings[nftAddress][tokenId]);
-        delete (i_listings[id]);
+
+        // remove from list
+        removeFromList(id);
+
+        s_noOftokenListed[listedItem.seller] -= 1;
 
         IERC721(nftAddress).safeTransferFrom(listedItem.seller, msg.sender, tokenId);
+        
         emit ItemBought(msg.sender, nftAddress, tokenId, listedItem.price);
     
     }
 
-
-    function updateListing(
-        address nftAddress,
-        uint256 tokenId,
-        uint256 newPrice
-    )
+    function updateListing(address nftAddress, uint256 tokenId, uint256 newPrice)
         external
         isListed(nftAddress, tokenId)
         nonReentrant
@@ -211,116 +199,69 @@ contract NFTMarketplace is ReentrancyGuard {
         emit ItemListed(msg.sender, nftAddress, tokenId, newPrice);
     }
 
-
-    function getListing(address nftAddress, uint256 tokenId)
-        external
-        view
-        returns (ListToken memory)
-    {
-        return s_listings[nftAddress][tokenId];
+    //  This will return all the NFTs currently listed to be sold on the marketplace
+    function getAllNFTs() public view returns(ListedToken[] memory) {
+        return i_listings;
     }
 
-    //This will return all the NFTs currently listed to be sold on the marketplace
-    function getAllNFTs() public view returns (ListedToken[] memory) {
-        
-        uint256 nftCount = listedTokenIds.current();
+    // This will return all the NFTs currently listed to be sold on the marketplace
+    function getListedTokenRange(uint256 start, uint256 count) public view returns (ListedToken[] memory) {
 
-        uint256 validCount = getValidListings(nftCount);
-
-        ListedToken[] memory tokens = new ListedToken[](validCount);
-  
-        uint currentIndex = 0;
-        uint currentId = 0;
-        
-        for(uint i = 0; i < nftCount; i++) {
-            currentId = i + 1;
-            ListedToken memory currentItem = i_listings[currentId];
-
-            if (currentItem.price != 0) {
-                tokens[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-
-        }
-
-        //the array 'tokens' has the list of all NFTs in the marketplace
-        return tokens;
-    }
-
-
-    function getValidListings (uint256 count) public view returns (uint256) {
-
-        uint256 validCount = 0;
-        uint currentId = 0;
-
-        for(uint i = 0; i < count; i++) {
-            currentId = i + 1;
-            ListedToken storage currentItem = i_listings[currentId];
-
-            if (currentItem.price != 0) validCount++;
-
-        }
-
-        return validCount;
-
-    }
-
-    //This will return all the NFTs currently listed to be sold on the marketplace
-    function getListedTokenRange(uint256 start, uint256 count) public view returns (ListedTokenOutput memory output) {
-
-        uint256 nftCount = listedTokenIds.current();
+        uint256 nftCount = i_listings.length;
         uint256 current = start;
         uint256 max = current + count;
-        uint256 _start = 0;
 
-        ListedToken[] memory tokens = new ListedToken[](nftCount);
-
-        if (start > nftCount) return ListedTokenOutput(nftCount, nftCount, tokens);
+        if (start > nftCount) return new ListedToken[](0);
 
         if (count > nftCount) max = nftCount;
 
-        while ((start < count) && (current < nftCount)) {
-            ListedToken memory currentToken = i_listings[current];
-            if (currentToken.price != 0) {
-                tokens[_start] = currentToken;
-                _start++;
-            }
-            current++;
+        ListedToken[] memory tokens = new ListedToken[](max - current);
+
+        for (uint i = current; i < max; i++) {
+            tokens[i] = i_listings[current];
         }
 
-        return ListedTokenOutput(nftCount, current, tokens);
+        return tokens;
     }
 
     //Returns all the NFTs that the current user is owner or seller in
     function getMyNFTs() public view returns (ListedToken[] memory) {
-        uint256 totalItemCount = listedTokenIds.current();
-        uint256 itemCount = 0;
-        uint256 currentIndex = 0;
-        uint256 currentId;
-        //Important to get a count of all the NFTs that belong to the user before we can make an array for them
-        for(uint i = 0; i < totalItemCount; i++)
-        {
-            if(i_listings[i+1].seller == msg.sender){
-                itemCount += 1;
-            }
-        }
+    
+        uint256 itemCount = s_noOftokenListed[msg.sender];
 
-        //Once you have the count of relevant NFTs, create an array then store all the NFTs in it
-        ListedToken[] memory items = new ListedToken[](itemCount);
-        for(uint i=0; i < totalItemCount; i++) {
-            if(i_listings[i+1].seller == msg.sender) {
-                currentId = i+1;
-                ListedToken storage currentItem = i_listings[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
+        ListedToken[] memory tokens = new ListedToken[](itemCount);
+
+        uint currentIndex = 0;
+
+        for (uint i = 0; i < itemCount; i++) {
+
+            if (currentIndex >= i_listings.length) break;
+
+            if(i_listings[i].seller == msg.sender) {
+                tokens[currentIndex] = i_listings[i];
+                currentIndex++;
             }
         }
-        return items;
+        
+        return tokens;
     }
+
 
     //Returns all the NFTs that the current user is owner or seller in
     function getTokenWithId(uint256 id) public view returns (ListedToken memory) {
         return i_listings[id];
+    }
+
+    function removeFromList(uint _index) private {
+    
+        require(_index < i_listings.length, "index out of bound");
+
+        for (uint i = _index; i < i_listings.length - 1; i++) {
+            i_listings[i] = i_listings[i + 1];
+        }
+        
+        i_listings.pop();
+    
     }
 
 }
