@@ -12,8 +12,8 @@ import { TransitionProps } from '@mui/material/transitions';
 import { NFT_COLLECTION } from '../../libs/intefaces';
 import { LoadingButton } from '@mui/lab';
 import { Close } from '@mui/icons-material';
-import nftAbi from "../../abi/nftAbi.json";
-import abi from "../../abi/abi.json";
+import RoyaltyTokenABI from "../../abi/RoyaltyToken.json";
+import NFTMarketplaceABI from "../../abi/NFTMarketplace.json";
 import { ethers } from "ethers";
 import { ADDRESS } from '../../libs/types';
 
@@ -52,7 +52,7 @@ export default function SellNFT(props: IProps) {
 
   const approval = useContractRead({
     address: contract.address as `0x${string}`,
-    abi: nftAbi,
+    abi: RoyaltyTokenABI,
     functionName: 'getApproved',
     chainId: polygonMumbai.id,
     args: [tokenId],
@@ -61,7 +61,7 @@ export default function SellNFT(props: IProps) {
 
   const listed = useContractRead({
     address: contractAddress as `0x${string}`,
-    abi: abi,
+    abi: NFTMarketplaceABI,
     functionName: 'getListing',
     chainId: polygonMumbai.id,
     args: [contract.address, tokenId],
@@ -70,7 +70,7 @@ export default function SellNFT(props: IProps) {
   const approve = useContractWrite({
     mode: 'recklesslyUnprepared',
     address: contract.address as `0x${string}`,
-    abi: nftAbi,
+    abi: RoyaltyTokenABI,
     functionName: 'approve',
     chainId: polygonMumbai.id,
     args: [contractAddress, tokenId]
@@ -79,7 +79,7 @@ export default function SellNFT(props: IProps) {
   const listing = useContractWrite({
     mode: 'recklesslyUnprepared',
     address: contractAddress as `0x${string}`,
-    abi: abi,
+    abi: NFTMarketplaceABI,
     functionName: 'listItem',
     chainId: polygonMumbai.id,
     args: [contract.address, tokenId, Number(price) <= 0 ? 0 : ethers.utils.parseUnits(price, 'ether')],
@@ -92,8 +92,6 @@ export default function SellNFT(props: IProps) {
   const listForSale = isApproved ? listing?.write : approve?.write 
 
   const sellerAddress = (listed?.data as any)?.[1]
-
-  console.log(sellerAddress)
 
   return (
     <>

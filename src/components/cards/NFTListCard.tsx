@@ -3,8 +3,8 @@ import { LoadingButton } from "@mui/lab"
 import { Box, Button, Card, Grid, Typography } from "@mui/material"
 import React, { useState } from "react"
 import { ethers } from "ethers";
-import abi from "../../abi/abi.json";
-import nftAbi from "../../abi/nftAbi.json";
+import NFTMarketplaceABI from "../../abi/NFTMarketplace.json";
+import RoyaltyTokenNFTMarketplaceABI from "../../abi/RoyaltyToken.json";
 import { NFT_COLLECTION } from "../../libs/intefaces";
 import SellNFTModal from "../ui/sellNFT";
 import { ADDRESS } from "../../libs/types";

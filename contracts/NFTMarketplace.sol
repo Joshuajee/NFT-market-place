@@ -5,6 +5,9 @@ import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "./liberies/ListingMapping.sol";
+
 
 error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
 error ItemNotForSale(address nftAddress, uint256 tokenId);
@@ -14,11 +17,17 @@ error NoProceeds();
 error NotOwner();
 error NotApprovedForMarketplace();
 error PriceMustBeAboveZero();
+error RoyaltyPriceMustBeListThanListingPrice(address nftAddress, address buyer, uint256 tokenId, uint256 price);
+error PurchaseFailed(address nftAddress, address buyer, uint256 tokenId, uint256 price);
+error OutOfBoundIndex();
 
-contract NftMarketplace is ReentrancyGuard {
+contract NFTMarketplace is ReentrancyGuard, Ownable {
 
     bytes4 private constant _INTERFACE_ID_ERC2981 = 0x2a55205a;
     address private constant NULL_ADDRESS = 0x0000000000000000000000000000000000000000;
+
+    using LM for LM.Map;
+    LM.Map private listingMap;
 
     struct ListToken {
         uint256 price;
@@ -53,59 +62,97 @@ contract NftMarketplace is ReentrancyGuard {
         uint256 indexed tokenId,
         uint256 price
     );
-
-    // State Variabless
-    mapping(address => mapping(uint256 => ListToken)) private s_listings;
-    mapping(address => uint256) private s_noOftokenListed;
-
-    ListedToken[] private i_listings;
     
     // Function modifiers
-    modifier notListed(address nftAddress, uint256 tokenId, address owner) {
-        ListToken memory listing = s_listings[nftAddress][tokenId];
-        if (listing.price > 0) {
-            revert AlreadyListed(nftAddress, tokenId);
-        }
+    modifier notListed(address nftAddress, uint256 tokenId) {
+        LM.ListedToken memory listing = getDetails(nftAddress, tokenId);
+        if (listing.price > 0) revert AlreadyListed(nftAddress, tokenId);
         _;
     }
 
-    modifier isOwner(address nftAddress, uint256 tokenId, address spender) {
+    modifier isOwner(address nftAddress, uint256 tokenId) {
         address owner = IERC721(nftAddress).ownerOf(tokenId);
-        if (spender != owner) {
-            revert NotOwner();
-        }
+        if (msg.sender != owner) revert NotOwner();
         _;
     }
 
     modifier isListed(address nftAddress, uint256 tokenId) {
-        ListToken memory listing = s_listings[nftAddress][tokenId];
-        if (listing.price <= 0) {
-            revert NotListed(nftAddress, tokenId);
-        }
+        LM.ListedToken memory listing = getDetails(nftAddress, tokenId);
+        if (listing.price < 0) revert NotListed(nftAddress, tokenId);
         _;
     }
 
-    function listItem(address nftAddress, uint256 tokenId, uint256 price)
-        public
-        notListed(nftAddress, tokenId, msg.sender)
-        isOwner(nftAddress, tokenId, msg.sender)
+    modifier isValidStart(uint start, uint size) {
+        if (start > size) revert OutOfBoundIndex();
+        _;
+    }
+
+    struct TokenDetails {
+        address nftAddress;
+        address seller;
+        uint tokenId;
+        uint price;
+        uint listedAt;
+        uint updatedAt;
+    }
+
+    function getDetails(address nftAddress, uint256 tokenId) public view returns(LM.ListedToken memory) {
+        return listingMap.get(LM.MapKeys(nftAddress, tokenId));
+    }
+
+    function listSize() public view returns(uint256) {
+        return listingMap.size();
+    }
+
+    function sellerSize(address seller) public view returns(uint256) {
+        return listingMap.sellerSize(seller);
+    }
+
+    function collectionSize(address nftAddress) public view returns(uint256) {
+        return listingMap.collectionSize(nftAddress);
+    }
+
+    function getKeys(uint index) public view returns(LM.MapKeys memory) {
+        return listingMap.getKeyAtIndex(index);
+    }
+
+    function getTokenDetailsByIndex(uint index) public view returns(TokenDetails memory tokenDetails) {
+        LM.MapKeys memory mapKeys = getKeys(index);
+        LM.ListedToken memory listedToken = getDetails(mapKeys.nftAddress, mapKeys.tokenId);
+        tokenDetails = TokenDetails(mapKeys.nftAddress, listedToken.seller, mapKeys.tokenId, listedToken.price, listedToken.listedAt, listedToken.updatedAt);
+    }
+
+    function getTokenDetails(address nftAddress, uint tokenId) public view returns(TokenDetails memory tokenDetails) {
+        LM.ListedToken memory listedToken = getDetails(nftAddress, tokenId);
+        tokenDetails = TokenDetails(nftAddress, listedToken.seller, tokenId, listedToken.price, listedToken.listedAt, listedToken.updatedAt);
+    }
+
+    function set(address nftAddress, uint256 tokenId, uint256 price) internal {
+        listingMap.set(LM.MapKeys(nftAddress, tokenId), LM.ListedToken(msg.sender, price, block.timestamp, block.timestamp));
+    }
+
+    function update(address nftAddress, uint256 tokenId, uint256 price) internal {
+        LM.ListedToken memory listedToken = getDetails(nftAddress, tokenId);
+        listingMap.set(LM.MapKeys(nftAddress, tokenId), LM.ListedToken(msg.sender, price, listedToken.listedAt, block.timestamp));
+    }
+
+    function remove(address nftAddress, uint256 tokenId) internal {
+        listingMap.remove(LM.MapKeys(nftAddress, tokenId));
+    }
+
+    function listItem(address nftAddress, uint256 tokenId, uint256 price) 
+        external
+        notListed(nftAddress, tokenId)
+        isOwner(nftAddress, tokenId)
     {
 
-        if (price <= 0) {
-            revert PriceMustBeAboveZero();
-        }
+        if (price <= 0) revert PriceMustBeAboveZero();
 
         if (IERC721(nftAddress).getApproved(tokenId) != address(this)) {
             revert NotApprovedForMarketplace();
         }
 
-        uint256 newTokenId = i_listings.length;
-
-        s_listings[nftAddress][tokenId] = ListToken(price, msg.sender, newTokenId);
-
-        i_listings.push(ListedToken(tokenId, nftAddress, msg.sender, price));
-
-        s_noOftokenListed[msg.sender] += 1;
+        set(nftAddress, tokenId, price);
         
         emit ItemListed(msg.sender, nftAddress, tokenId, price);
     
@@ -118,16 +165,10 @@ contract NftMarketplace is ReentrancyGuard {
 
     function cancelListing(address nftAddress, uint256 tokenId)
         external
-        isOwner(nftAddress, tokenId, msg.sender)
+        isOwner(nftAddress, tokenId)
         isListed(nftAddress, tokenId)
     {
-
-        uint256 id = s_listings[nftAddress][tokenId].index;
-        delete (s_listings[nftAddress][tokenId]);
-
-        // remove from list
-        removeFromList(id);
-
+        remove(nftAddress, tokenId);
         emit ItemCanceled(msg.sender, nftAddress, tokenId);
     }
 
@@ -135,12 +176,12 @@ contract NftMarketplace is ReentrancyGuard {
     function buyItem(address nftAddress, uint256 tokenId)
         external
         payable
-        isListed(nftAddress, tokenId)
         nonReentrant
+        isListed(nftAddress, tokenId)
     {
         uint256 price = msg.value;
 
-        ListToken memory listedItem = s_listings[nftAddress][tokenId];
+        TokenDetails memory listedItem = getTokenDetails(nftAddress, tokenId);
         
         if (price < listedItem.price) {
             revert PriceNotMet(nftAddress, tokenId, listedItem.price);
@@ -152,34 +193,24 @@ contract NftMarketplace is ReentrancyGuard {
 
             (address receiver, uint256 royaltyAmount)  = IERC2981(nftAddress).royaltyInfo(tokenId, price);
 
-            require(royaltyAmount < price, "Invalid Royalty price, Royalty should be less than price");
+            if (royaltyAmount > price) 
+                revert RoyaltyPriceMustBeListThanListingPrice(nftAddress, msg.sender, tokenId, price);
 
             if (royaltyAmount > 0) {
-
                 price = price - royaltyAmount;
-
                 (bool successRoyalty, ) = payable(receiver).call{value: royaltyAmount}("Royalty Payment");
-
-                require(successRoyalty, "Transfer failed");
-
+                if (!successRoyalty) revert PurchaseFailed(nftAddress, msg.sender, tokenId, price);
             }
 
         }
 
         (bool success, ) = payable(listedItem.seller).call{value: price}("Proceeds from NFT sales");
 
-        require(success, "Transfer failed");
-
-        uint256 id = s_listings[nftAddress][tokenId].index;
-
-        delete (s_listings[nftAddress][tokenId]);
-
-        // remove from list
-        removeFromList(id);
-
-        s_noOftokenListed[listedItem.seller] -= 1;
+        if (!success) revert PurchaseFailed(nftAddress, msg.sender, tokenId, price);
 
         IERC721(nftAddress).safeTransferFrom(listedItem.seller, msg.sender, tokenId);
+
+        remove(nftAddress, tokenId);
         
         emit ItemBought(msg.sender, nftAddress, tokenId, listedItem.price);
     
@@ -188,80 +219,124 @@ contract NftMarketplace is ReentrancyGuard {
     function updateListing(address nftAddress, uint256 tokenId, uint256 newPrice)
         external
         isListed(nftAddress, tokenId)
-        nonReentrant
-        isOwner(nftAddress, tokenId, msg.sender)
+        isOwner(nftAddress, tokenId)
     {
         if (newPrice == 0) {
             revert PriceMustBeAboveZero();
         }
 
-        s_listings[nftAddress][tokenId].price = newPrice;
+        update(nftAddress, tokenId, newPrice);
+        
         emit ItemListed(msg.sender, nftAddress, tokenId, newPrice);
     }
 
     //  This will return all the NFTs currently listed to be sold on the marketplace
-    function getAllNFTs() public view returns(ListedToken[] memory) {
-        return i_listings;
+    function getAllNFTs() public view returns(TokenDetails[] memory) {
+
+        uint size = listSize();
+        uint count = 0;
+
+        TokenDetails[] memory tokenDetails = new TokenDetails[](size); 
+
+        for (uint i = size; i > 0; i--) {
+            tokenDetails[count] = getTokenDetailsByIndex(i - 1);
+            count++;
+        }
+
+        return tokenDetails;
     }
 
     // This will return all the NFTs currently listed to be sold on the marketplace
-    function getListedTokenRange(uint256 start, uint256 count) public view returns (ListedToken[] memory) {
+    function getNFTsByRange(uint256 start, uint256 limit) public view isValidStart(start, listSize()) returns (TokenDetails[] memory) {
 
-        uint256 nftCount = i_listings.length;
-        uint256 current = start;
-        uint256 max = current + count;
+        uint count = 0;
 
-        if (start > nftCount) return new ListedToken[](0);
+        uint trueCount = start - limit;
+        uint trueLimit = limit;
 
-        if (count > nftCount) max = nftCount;
+        TokenDetails[] memory tokenDetails = new TokenDetails[](trueLimit); 
 
-        ListedToken[] memory tokens = new ListedToken[](max - current);
-
-        for (uint i = current; i < max; i++) {
-            tokens[i] = i_listings[current];
+        for (uint i = start; i > trueCount; i--) {
+            tokenDetails[count] = getTokenDetailsByIndex(i - 1);
+            count++;
         }
 
-        return tokens;
+        return tokenDetails;
     }
 
-    //Returns all the NFTs that the current user is owner or seller in
-    function getMyNFTs() public view returns (ListedToken[] memory) {
-    
-        uint256 itemCount = s_noOftokenListed[msg.sender];
+    //  This will return all the NFTs currently of a seller listed to be sold on the marketplace
+    function getAllSellerNFTs(address seller) public view returns(TokenDetails[] memory) {
 
-        ListedToken[] memory tokens = new ListedToken[](itemCount);
+        uint size = sellerSize(seller);
+        uint count = 0;
 
-        uint currentIndex = 0;
+        TokenDetails[] memory tokenDetails = new TokenDetails[](size); 
 
-        for (uint i = 0; i < itemCount; i++) {
-
-            if (currentIndex >= i_listings.length) break;
-
-            if(i_listings[i].seller == msg.sender) {
-                tokens[currentIndex] = i_listings[i];
-                currentIndex++;
-            }
+        for (uint i = size; i > 0; i--) {
+            LM.MapKeys memory mapKeys = listingMap.getSellerKeyAtIndex(seller, i - 1);
+            LM.ListedToken memory listedToken = listingMap.get(mapKeys);
+            tokenDetails[count] = TokenDetails(mapKeys.nftAddress, listedToken.seller, mapKeys.tokenId, listedToken.price, listedToken.listedAt, listedToken.updatedAt);
+            count++;
         }
-        
-        return tokens;
+
+        return tokenDetails;
     }
 
+    function getSellerNFTsByRange(address seller, uint256 start, uint256 limit) public view isValidStart(start, sellerSize(seller)) returns (TokenDetails[] memory) {
 
-    //Returns all the NFTs that the current user is owner or seller in
-    function getTokenWithId(uint256 id) public view returns (ListedToken memory) {
-        return i_listings[id];
-    }
+        uint count = 0;
 
-    function removeFromList(uint _index) private {
-    
-        require(_index < i_listings.length, "index out of bound");
+        uint trueCount = start - limit;
+        uint trueLimit = limit;
 
-        for (uint i = _index; i < i_listings.length - 1; i++) {
-            i_listings[i] = i_listings[i + 1];
+        TokenDetails[] memory tokenDetails = new TokenDetails[](trueLimit); 
+
+        for (uint i = start; i > trueCount; i--) {
+            LM.MapKeys memory mapKeys = listingMap.getSellerKeyAtIndex(seller, i - 1);
+            LM.ListedToken memory listedToken = listingMap.get(mapKeys);
+            tokenDetails[count] = TokenDetails(mapKeys.nftAddress, listedToken.seller, mapKeys.tokenId, listedToken.price, listedToken.listedAt, listedToken.updatedAt);
+            count++;
         }
-        
-        i_listings.pop();
-    
+
+        return tokenDetails;
+    }
+
+    //  This will return all the NFTs of a collection currently listed to be sold on the marketplace
+    function getAllCollectionNFTs(address collection) public view returns(TokenDetails[] memory) {
+
+        uint size = collectionSize(collection);
+        uint count = 0;
+
+        TokenDetails[] memory tokenDetails = new TokenDetails[](size); 
+
+        for (uint i = size; i > 0; i--) {
+            LM.MapKeys memory mapKeys = listingMap.getCollectionKeyAtIndex(collection, i - 1);
+            LM.ListedToken memory listedToken = listingMap.get(mapKeys);
+            tokenDetails[count] = TokenDetails(mapKeys.nftAddress, listedToken.seller, mapKeys.tokenId, listedToken.price, listedToken.listedAt, listedToken.updatedAt);
+            count++;
+        }
+
+        return tokenDetails;
+    }
+
+
+    function getCollectionNFTsByRange(address collection, uint256 start, uint256 limit) public view isValidStart(start, collectionSize(collection)) returns (TokenDetails[] memory) {
+
+        uint count = 0;
+
+        uint trueCount = start - limit;
+        uint trueLimit = limit;
+
+        TokenDetails[] memory tokenDetails = new TokenDetails[](trueLimit); 
+
+        for (uint i = start; i > trueCount; i--) {
+            LM.MapKeys memory mapKeys = listingMap.getCollectionKeyAtIndex(collection, i - 1);
+            LM.ListedToken memory listedToken = listingMap.get(mapKeys);
+            tokenDetails[count] = TokenDetails(mapKeys.nftAddress, listedToken.seller, mapKeys.tokenId, listedToken.price, listedToken.listedAt, listedToken.updatedAt);
+            count++;
+        }
+
+        return tokenDetails;
     }
 
 }
