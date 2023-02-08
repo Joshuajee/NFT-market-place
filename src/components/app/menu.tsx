@@ -54,7 +54,7 @@ export default function Menu(props: IProps) {
                         <ListItemText primary={ROUTES_NAME.SELL_NFT} />
                     </ListItemButton>
                 </ListItem>
-
+{/* 
                 <ListItem disablePadding>
                     <ListItemButton LinkComponent={Link} href={ROUTES.MINT_NFT}>
                         <ListItemIcon>
@@ -71,7 +71,7 @@ export default function Menu(props: IProps) {
                         </ListItemIcon>
                         <ListItemText primary={ROUTES_NAME.MY_PROFILE} />
                     </ListItemButton>
-                </ListItem>
+                </ListItem> */}
 
             </List>
 
