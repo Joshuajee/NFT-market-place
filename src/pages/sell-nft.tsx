@@ -34,22 +34,10 @@ export default function SellNFT () {
     }, [address])
 
 
-    const addNFTs = useCallback(async () => {
-
-        const result = await getNFTsByOwner(address as string)
-        if (result.status) {
-            setNFTs((nfts: any) => [...nfts, result.data?.ownedNfts])
-        } else {
-            toast.error(result.error)
-        }
-
-    }, [address])
-
     useEffect(() => {
         if(isConnected) getNFTs()
     }, [isConnected, getNFTs])
 
-    
 
     const pageContent = (
         <Container maxWidth="lg">

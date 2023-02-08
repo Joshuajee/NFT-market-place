@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useContractRead, useContractWrite } from 'wagmi'
+import { useState, useEffect } from 'react';
+import { useContractRead, useContractWrite, useContractEvent } from 'wagmi'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -16,6 +17,8 @@ import RoyaltyTokenABI from "../../abi/RoyaltyToken.json";
 import NFTMarketplaceABI from "../../abi/NFTMarketplace.json";
 import { ethers } from "ethers";
 import { ADDRESS } from '../../libs/types';
+import SellIcon from '@mui/icons-material/Sell';
+import { toast } from 'react-toastify';
 
 
 const Transition = React.forwardRef(function Transition(
@@ -37,10 +40,12 @@ const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 export default function SellNFT(props: IProps) {
 
   const { nft, address } = props
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
   const { contract, title, tokenId, description } = nft
-  const [price, setPrice] = React.useState("0")
-  const [isApproved, setIsApproved] = React.useState(false)
+  const [price, setPrice] = useState("0")
+  const [isApproved, setIsApproved] = useState(false)
+  const [hasBeenListed, setHasBeenListed] = useState(false)
+  const [loading, setLoading]  = useState(false)
 
   const handleClose = () => {
     setOpen(false);
@@ -54,7 +59,6 @@ export default function SellNFT(props: IProps) {
     address: contract.address as `0x${string}`,
     abi: RoyaltyTokenABI,
     functionName: 'getApproved',
-    chainId: polygonMumbai.id,
     args: [tokenId],
     enabled: open,
   })
@@ -63,7 +67,6 @@ export default function SellNFT(props: IProps) {
     address: contractAddress as `0x${string}`,
     abi: NFTMarketplaceABI,
     functionName: 'getListing',
-    chainId: polygonMumbai.id,
     args: [contract.address, tokenId],
   })
 
@@ -72,31 +75,78 @@ export default function SellNFT(props: IProps) {
     address: contract.address as `0x${string}`,
     abi: RoyaltyTokenABI,
     functionName: 'approve',
-    chainId: polygonMumbai.id,
     args: [contractAddress, tokenId]
   })
 
   const listing = useContractWrite({
     mode: 'recklesslyUnprepared',
-    address: contractAddress as `0x${string}`,
+    address: contractAddress as ADDRESS,
     abi: NFTMarketplaceABI,
     functionName: 'listItem',
-    chainId: polygonMumbai.id,
     args: [contract.address, tokenId, Number(price) <= 0 ? 0 : ethers.utils.parseUnits(price, 'ether')],
   })
 
-  React.useEffect(() => {
+  const isListed : any = useContractRead({
+    address: contractAddress as ADDRESS,
+    abi: NFTMarketplaceABI,
+    functionName: 'getDetails',
+    args: [contract.address, tokenId],
+  })
+
+
+  useContractEvent({
+    address: contract.address as ADDRESS,
+    abi: RoyaltyTokenABI,
+    eventName: 'Approval',
+    listener(owner, approved, tokenId) {
+      if(owner === address && approved === contractAddress && tokenId === tokenId) {
+        setIsApproved(true)
+        setLoading(false)
+      }
+    },
+  })
+
+  useContractEvent({
+    address: contractAddress as ADDRESS,
+    abi: NFTMarketplaceABI,
+    eventName: 'ItemListed',
+    listener(seller, nftAddress, tokenId, price) {
+      if(seller === address //&& nftAddress === contract.address
+        && tokenId === tokenId && price === price
+        ) {
+        setLoading(false)
+        toast("NFT listed Successfully")
+      }
+    },
+  })
+
+  useEffect(() => {
     setIsApproved(approval.data === contractAddress)
   }, [approval.data])  
 
-  const listForSale = isApproved ? listing?.write : approve?.write 
+  useEffect(() => {
+    if (isListed?.data?.price  > 0) setHasBeenListed(true)
+  }, [isListed.data?.price])
+
+  console.log(isListed.data)
+
+  const listForSale = () => {
+    setLoading(true)
+    return isApproved ?  listing?.write?.() : approve?.write?.() 
+  }
 
   const sellerAddress = (listed?.data as any)?.[1]
 
   return (
     <>
       <Box sx={{ position: "absolute" }}  >
-        { ( sellerAddress != address) && <LoadingButton variant="contained" color="secondary" onClick={() => setOpen(true)} > Sell </LoadingButton> }
+        { 
+          (sellerAddress != address && !hasBeenListed) && (
+            <IconButton  onClick={() => setOpen(true)}> 
+              <SellIcon color="success" />
+            </IconButton> 
+          )
+        }
       </Box>
       <Dialog
         open={open}
@@ -122,8 +172,10 @@ export default function SellNFT(props: IProps) {
             }}/>
 
           <LoadingButton 
+            loading={loading}
+            loadingIndicator="Please Wait..."
             disabled={Number(price) <= 0}
-            onClick={() => listForSale?.()} fullWidth 
+            onClick={listForSale} fullWidth 
             sx={{mt: 2, height: 50}} variant="contained">
               { isApproved ?  "List NFT to" : "Approve NFT for" } Marketplace
           </LoadingButton>

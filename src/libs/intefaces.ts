@@ -1,3 +1,5 @@
+import { ADDRESS } from "./types";
+
 export interface NFT_COLLECTION {
     media: { gateway: string } [],
     contract: {
@@ -16,4 +18,10 @@ export interface NFT_DETAILS {
 export interface ROYALTY_DETAILS {
     enabled: boolean, 
     value: number, 
+}
+
+export interface TOKEN_DETAILS {
+    price: number;
+    nftAddress: ADDRESS;
+    tokenId: number;
 }
