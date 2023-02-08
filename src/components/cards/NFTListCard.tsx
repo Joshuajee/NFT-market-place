@@ -1,10 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { LoadingButton } from "@mui/lab"
 import { Box, Button, Card, Grid, Typography } from "@mui/material"
 import React, { useState } from "react"
-import { ethers } from "ethers";
-import abi from "../../abi/abi.json";
-import nftAbi from "../../abi/nftAbi.json";
 import { NFT_COLLECTION } from "../../libs/intefaces";
 import SellNFTModal from "../ui/sellNFT";
 import { ADDRESS } from "../../libs/types";

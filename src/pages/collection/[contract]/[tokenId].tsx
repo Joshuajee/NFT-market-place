@@ -8,7 +8,7 @@ import axios from "axios";
 import styles from "../../../styles/Pages.module.css";
 import Layout from "../../../components/app/layout";
 import { polygonMumbai } from "wagmi/chains";
-import nftAbi from "../../../abi/nftAbi.json";
+import RoyaltyTokenABI from "../../../abi/RoyaltyToken.json";
 
 
 export default function NFT () {
@@ -21,13 +21,11 @@ export default function NFT () {
 
     const tokenData = useContractRead({
         address: contract as `0x${string}`,
-        abi: nftAbi,
+        abi: RoyaltyTokenABI,
         functionName: 'tokenURI',
         chainId: polygonMumbai.id,
         args: [tokenId],
     })
-
-    console.log(verifyAddress(String(tokenData.data)))
 
     // const fetchNFTData = async () => {
     //     const url = getNFTUrl(String(tokenData?.data as string))

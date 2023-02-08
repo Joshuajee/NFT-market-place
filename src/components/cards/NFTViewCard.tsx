@@ -3,20 +3,16 @@ import { LoadingButton } from "@mui/lab"
 import { Box, Button, Card, Grid, Typography } from "@mui/material"
 import React, { useState } from "react"
 import { ethers } from "ethers";
-import abi from "../../abi/abi.json";
-import nftAbi from "../../abi/nftAbi.json";
 import { NFT_COLLECTION } from "../../libs/intefaces";
 import SellNFTModal from "../ui/sellNFT";
 
 interface IProps {
     nft: NFT_COLLECTION
 }
-const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
 const NFTViewCard = (props: IProps) => {
 
     const { media, contract, title, tokenId } = props.nft
-    const [open, setOpen] = useState(false)
 
     return (
         <Grid item xs={12} sm={6} md={4} lg={3} >

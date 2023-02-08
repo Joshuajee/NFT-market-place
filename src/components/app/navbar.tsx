@@ -64,7 +64,7 @@ export default function NavBar(props: Props) {
                 <Grid container sx={{color: "white"}} justifyContent="center">
                     <Link className={styles.link} sx={{color: "white"}} href={ROUTES.MARKET_PLACE}> { ROUTES_NAME.MARKET_PLACE } </Link>
                     <Link className={styles.link} sx={{color: "white"}} href={ROUTES.SELL_NFT}> { ROUTES_NAME.SELL_NFT } </Link>
-                    <Link className={styles.link} sx={{color: "white"}} href={ROUTES.MINT_NFT}> { ROUTES_NAME.MINT_NFT} </Link> 
+                    {/* <Link className={styles.link} sx={{color: "white"}} href={ROUTES.MINT_NFT}> { ROUTES_NAME.MINT_NFT} </Link>  */}
                     {/* <Link className={styles.link} sx={{color: "white"}} href={ROUTES.MY_PROFILE}> { ROUTES_NAME.MY_PROFILE} </Link> */}
                 </Grid>
             </Grid>

@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useAccount } from 'wagmi'
 import Layout from "../components/app/layout";
-import abi from "../abi/abi.json";
-import nftAbi from "../abi/nftAbi.json";
+import NFTMarketplaceABI from "../abi/NFTMarketplace.json";
+import RoyaltyTokenABI from "../abi/RoyaltyToken.json";
 import { ethers }   from "ethers";
 import { useEffect, useState } from "react";
 import { Box, Grid, Typography } from "@mui/material";
@@ -29,7 +29,7 @@ export default function Profile () {
         const addr = await signer.getAddress();
 
         //Pull the deployed contract instance
-        const contract = new ethers.Contract(contractAddress, abi, signer)
+        const contract = new ethers.Contract(contractAddress, NFTMarketplaceABI, signer)
 
         //create an NFT Token
         const transaction = await contract.getMyNFTs()
@@ -41,7 +41,7 @@ export default function Profile () {
         
         const items = await Promise.all(transaction.map(async (i: any) => {
 
-            const contract = new ethers.Contract(String(process.env.NEXT_PUBLIC_NFT_CONTRACT), nftAbi, signer)
+            const contract = new ethers.Contract(String(process.env.NEXT_PUBLIC_NFT_CONTRACT), RoyaltyTokenABI, signer)
 
             const tokenURI = await contract.tokenURI(i.tokenId);
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TextField, Typography, Box, FormControlLabel, Checkbox } from "@mui/material";
 import { ethers } from 'ethers';
-import nftAbi from "../../abi/nftAbi.json";
+import RoyaltyTokenABI from "../../abi/RoyaltyToken.json";
 import { ROYALTY_DETAILS } from "../../libs/intefaces";
 
 
@@ -31,7 +31,7 @@ const Royalty = (props: IProps) => {
     //         const signer = provider.getSigner();
 
     //         //Pull the deployed contract instance
-    //         const contract = new ethers.Contract(String(process.env.NEXT_PUBLIC_NFT_CONTRACT), nftAbi, signer)
+    //         const contract = new ethers.Contract(String(process.env.NEXT_PUBLIC_NFT_CONTRACT), RoyaltyToken, signer)
 
     //         //actually create the NFT
     //         const transaction = await contract.royaltyRoyalty(address, metadataURL, 0)
