@@ -30,3 +30,8 @@ export const getNFTUrl = (url: string) => {
 
   return url
 }
+
+
+export const convertToEther = (price: number) => {
+  return `${ethers.utils.formatUnits(price.toString(), 'ether')} MATIC`
+}

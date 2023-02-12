@@ -20,7 +20,7 @@ const NFTCard = (props: IProps) => {
 
             <Card sx={{ borderRadius: "25px", height: "calc(100% - 3.4em)" }}>
 
-                <img alt={`${name} #${tokenId}`}  onClick={() => router.push(`/collection/${contract}/${tokenId}?image=${image}&name=${name}`)} style={{objectFit: "cover", cursor: "pointer", width: "100%", aspectRatio: 1 / 1 }} src={image}  />
+                <img alt={`${name} #${tokenId}`}  onClick={() => router.push(`/collection/${contract}/${tokenId}`)} style={{objectFit: "cover", cursor: "pointer", width: "100%", aspectRatio: 1 / 1 }} src={image}  />
 
                 <Box sx={{position: "relative", top: "-5em", left: "1em"}}>
 

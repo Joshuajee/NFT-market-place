@@ -93,7 +93,6 @@ export default function SellNFT(props: IProps) {
     args: [contract.address, tokenId],
   })
 
-
   useContractEvent({
     address: contract.address as ADDRESS,
     abi: RoyaltyTokenABI,

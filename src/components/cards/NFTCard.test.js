@@ -57,7 +57,7 @@ describe ("NFT card", () => {
 
         fireEvent.click(image)
 
-        const link = `/collection/${nft.contract}/${nft.tokenId}?image=${nft.image}&name=${nft.name}`
+        const link = `/collection/${nft.contract}/${nft.tokenId}`
 
         expect(mockRouter).toMatchObject({ 
             asPath: link,

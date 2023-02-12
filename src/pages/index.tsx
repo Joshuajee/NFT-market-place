@@ -1,10 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useContractRead } from 'wagmi';
-import { polygonMumbai } from "wagmi/chains";
-import { ethers } from "ethers";
 import NFTMarketplaceABI from "../abi/NFTMarketplace.json";
-import RoyaltyTokenABI from "../abi/RoyaltyToken.json";
 import { Grid } from "@mui/material";
 import NFTCard from "../components/cards/NFTCard";
 import Layout from "../components/app/layout";
@@ -24,7 +20,6 @@ export default function Home() {
 
   const trueLimit = useRangeQuery(start, limit)
 
-
   const listSize = useContractRead({
     address: contract as ADDRESS,
     abi: NFTMarketplaceABI,
@@ -35,7 +30,6 @@ export default function Home() {
     address: contract as ADDRESS,
     abi: NFTMarketplaceABI,
     functionName: 'getNFTsByRange',
-    chainId: polygonMumbai.id,
     args: [start, trueLimit],
     enabled: listSize ? (start > 0) ? true  : false : false
   })

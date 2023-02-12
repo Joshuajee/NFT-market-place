@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { readContracts } from '@wagmi/core'
 import RoyaltyTokenABI from "../abi/RoyaltyToken.json";
-import { TOKEN_DETAILS } from "../libs/intefaces";
+import { CONTRACTS, METADATA, TOKEN_DETAILS } from "../libs/intefaces";
 import { getNFTUrl } from "../libs/utils";
 import { ADDRESS } from "../libs/types";
 
@@ -9,13 +9,12 @@ import { ADDRESS } from "../libs/types";
 const useGetTokenMetadata = (tokens: TOKEN_DETAILS[] | undefined) => {
 
     const [tokenURIs, setTokenURIs] = useState<string[]>([])
-    const [metadata, setMetadata] = useState<any[] | null>(null)
-    const [contracts, setContracts] = useState<Array<any> | undefined>()
+    const [metadata, setMetadata] = useState<METADATA[] | null>(null)
+    const [contracts, setContracts] = useState <CONTRACTS[] | undefined>()
 
 
     useEffect(() => {
-
-        const contracts: Array<any> | undefined = tokens?.map((token : TOKEN_DETAILS) => {
+        const contracts: CONTRACTS[] | undefined = tokens?.map((token : TOKEN_DETAILS) => {
             return {
                 address: token.nftAddress as ADDRESS,
                 abi: RoyaltyTokenABI,
@@ -28,7 +27,7 @@ const useGetTokenMetadata = (tokens: TOKEN_DETAILS[] | undefined) => {
 
     }, [tokens])
 
-    
+
     useEffect(() => {
 
         const fetchURIs = async () => {
@@ -52,7 +51,7 @@ const useGetTokenMetadata = (tokens: TOKEN_DETAILS[] | undefined) => {
             const data = await Promise.all(tokenURIs?.map(async (tokenURI: string, index: number) => {
                 const data = await (await fetch(getNFTUrl(tokenURI))).json()
                 const token = tokens?.[index]
-                return { ...data, price: token?.price, tokenId: token?.tokenId  }
+                return { ...data, price: token?.price, tokenId: token?.tokenId, contract: token?.nftAddress  }
             }))
 
             setMetadata(data)
@@ -62,8 +61,6 @@ const useGetTokenMetadata = (tokens: TOKEN_DETAILS[] | undefined) => {
         getMetadata()
 
     }, [tokenURIs, tokens])
-
-    console.log(metadata)
 
     return metadata
 

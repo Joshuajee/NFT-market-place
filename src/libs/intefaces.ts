@@ -25,3 +25,19 @@ export interface TOKEN_DETAILS {
     nftAddress: ADDRESS;
     tokenId: number;
 }
+
+export interface CONTRACTS {
+    address: ADDRESS,
+    abi: any[],
+    functionName: string,
+    args: any[]
+}
+
+export interface METADATA {
+    contract: ADDRESS;
+    description: string; 
+    image: string; 
+    name: string;
+    price: number; 
+    tokenId: number;      
+}
