@@ -1,5 +1,5 @@
 {
-  "name": "nft-marketplace-challenge",
+  "name": "nft-marketplace",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -22,6 +22,7 @@
     "aos": "^2.3.4",
     "api": "^4.5.2",
     "axios": "^0.27.2",
+    "buffer-to-uint8array": "^1.1.0",
     "dot-prop": "^7.2.0",
     "ethers": "^5.4.7",
     "hamburger-react": "^2.5.0",

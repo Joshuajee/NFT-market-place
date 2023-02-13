@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import multer from 'multer';
 import pinataSDK from '@pinata/sdk';
+import { toUtf8Bytes } from 'ethers/lib/utils.js';
+import { toArrayBuffer } from '../../libs/utils';
+
 const fs = require('fs');
 
 const pinata = pinataSDK(String(process.env.PINATA_KEY), String(process.env.PINATA_SECRET));
@@ -21,26 +24,29 @@ type ResponseData = ApiResponse<string[], string>;
 const oneMegabyteInBytes = 1000000;
 
 
-// const upload = multer({
-//     limits: { fileSize: oneMegabyteInBytes * 2 },
-//     storage: multer.memoryStorage(),
-//     fileFilter: (req: any, file: any, cb: any) => {
-//       const acceptFile: boolean = ['image/jpeg', 'image/png'].includes(file.mimetype);
-//       cb(null, acceptFile);
-//     }
-// });
-  
 const upload = multer({
-    dest:'public/uploads/',
     limits: { fileSize: oneMegabyteInBytes * 2 },
+    storage: multer.memoryStorage(),
     fileFilter: (req: any, file: any, cb: any) => {
-        const acceptFile: boolean = ['image/jpeg', 'image/png'].includes(file.mimetype);
-        cb(null, acceptFile);
+      const acceptFile: boolean = ['image/jpeg', 'image/png'].includes(file.mimetype);
+      cb(null, acceptFile);
     },
     filename: function (req: any, file: any, cb: any) {
         cb(null , file.originalname);
     }
 });
+  
+// const upload = multer({
+//     dest:'public/uploads/',
+//     limits: { fileSize: oneMegabyteInBytes * 2 },
+//     fileFilter: (req: any, file: any, cb: any) => {
+//         const acceptFile: boolean = ['image/jpeg', 'image/png'].includes(file.mimetype);
+//         cb(null, acceptFile);
+//     },
+//     filename: function (req: any, file: any, cb: any) {
+//         cb(null , file.originalname);
+//     }
+// });
 
 const apiRoute = nextConnect({
     onError(error, req: NextConnectApiRequest, res: NextApiResponse<ResponseData>) {
@@ -56,20 +62,29 @@ apiRoute.use(upload.array('image'));
 apiRoute.post(async (req: any, res: NextApiResponse<any>) => {
 
     try {
+        const buffer = req.files[0].buffer;
+        const tou8 = require('buffer-to-uint8array');
+        const a = tou8(buffer);
 
-        const filePath = req.files[0].path;
+        console.log(a)
 
-        const readableStreamForFile = fs.createReadStream(filePath);
+        //console.log(Buffer.from(buffer).toString('base64'));
 
-        const data = await pinata.pinFileToIPFS(readableStreamForFile);
+        const readableStreamForFile = fs.createReadStream(a);
 
-        fs.unlinkSync(filePath);
+        console.log(readableStreamForFile)
+
+        const data = await pinata.pinFileToIPFS(a);
 
         console.log(data)
 
-        res.send(data)
+
+        //fs.unlinkSync(filePath);
+
+        res.send("")
 
     } catch (e) {
+        console.log(e)
         res.status(500).send(e)
     }
 

@@ -4,6 +4,7 @@ import { ethers } from "ethers"
 import { useRouter } from "next/router"
 import React from "react"
 import { NFT_COLLECTION, NFT_DETAILS } from "../../libs/intefaces"
+import { getNFTUrl } from "../../libs/utils"
 
 interface IProps {
     nft: any
@@ -20,7 +21,7 @@ const NFTCard = (props: IProps) => {
 
             <Card sx={{ borderRadius: "25px", height: "calc(100% - 3.4em)" }}>
 
-                <img alt={`${name} #${tokenId}`}  onClick={() => router.push(`/collection/${contract}/${tokenId}`)} style={{objectFit: "cover", cursor: "pointer", width: "100%", aspectRatio: 1 / 1 }} src={image}  />
+                <img alt={`${name} #${tokenId}`}  onClick={() => router.push(`/collection/${contract}/${tokenId}`)} style={{objectFit: "cover", cursor: "pointer", width: "100%", aspectRatio: 1 / 1 }} src={getNFTUrl(image)}  />
 
                 <Box sx={{position: "relative", top: "-5em", left: "1em"}}>
 

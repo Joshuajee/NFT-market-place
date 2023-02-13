@@ -53,7 +53,7 @@ export default function NavBar(props: Props) {
         <Grid container justifyContent={"space-between"}>
 
             <Grid item md={3} lg={2}> 
-                <Typography variant='h6' sx={{fontWeight: 700, lineHeight: 2.5}}>  JEE Marketplace </Typography>                            
+                <Typography variant='h6' component={Link} href="/" sx={{fontWeight: 700, lineHeight: 2.5, textDecoration: "none", color: "white" }}>  JEE Marketplace </Typography>                            
             </Grid>
 
             <Grid item md={3} lg={4} aria-label={"search container"} className={styles.hide_mobile}>
@@ -64,7 +64,7 @@ export default function NavBar(props: Props) {
                 <Grid container sx={{color: "white"}} justifyContent="center">
                     <Link className={styles.link} sx={{color: "white"}} href={ROUTES.MARKET_PLACE}> { ROUTES_NAME.MARKET_PLACE } </Link>
                     <Link className={styles.link} sx={{color: "white"}} href={ROUTES.SELL_NFT}> { ROUTES_NAME.SELL_NFT } </Link>
-                    {/* <Link className={styles.link} sx={{color: "white"}} href={ROUTES.MINT_NFT}> { ROUTES_NAME.MINT_NFT} </Link>  */}
+                    <Link className={styles.link} sx={{color: "white"}} href={ROUTES.MINT_NFT}> { ROUTES_NAME.MINT_NFT} </Link> 
                     {/* <Link className={styles.link} sx={{color: "white"}} href={ROUTES.MY_PROFILE}> { ROUTES_NAME.MY_PROFILE} </Link> */}
                 </Grid>
             </Grid>

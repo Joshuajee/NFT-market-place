@@ -4,14 +4,13 @@ import { useAccount, useContractRead, useContractWrite, useContractEvent } from 
 import {  LoadingButton } from "@mui/lab";
 import {  Grid, Typography, Card } from "@mui/material";
 import { useRouter } from "next/router";
-import { convertToEther, getNFTUrl, verifyAddress } from "../../../libs/utils";
+import { convertToEther, getNFTUrl } from "../../../libs/utils";
 import styles from "../../../styles/Pages.module.css";
 import Layout from "../../../components/app/layout";
 import RoyaltyTokenABI from "../../../abi/RoyaltyToken.json";
 import NFTMarketplaceABI from "../../../abi/NFTMarketplace.json";
 import { ADDRESS } from "../../../libs/types";
 import { toast } from "react-toastify";
-import { ethers } from "ethers";
 import LoadingBG from "../../../components/app/loaderBg";
 
 
@@ -87,6 +86,11 @@ export default function NFT () {
         },
     })
 
+    const buy = () => {
+        if (!address) return toast.error("Please connect your wallet!")
+        buyNFT?.write()
+    }
+
     return (
         <Layout>
             <Grid container spacing={2} sx={{marginTop: "2em"}}>
@@ -103,7 +107,7 @@ export default function NFT () {
             
                             <Card sx={{height: "30em", borderRadius: "10px"}}>
 
-                                <img alt={``} style={{objectFit: "cover", cursor: "pointer", aspectRatio: 1 / 1, width: "100%" }} src={String(metadata?.image)}  />
+                                <img alt={``} style={{objectFit: "contain", cursor: "pointer", aspectRatio: 1 / 1, width: "100%" }} src={getNFTUrl(String(metadata?.image))}  />
             
                             </Card>                    
             
@@ -130,7 +134,7 @@ export default function NFT () {
                                             : (
                                             <LoadingButton 
                                                 disabled={metadata?.seller === address}
-                                                onClick={() => buyNFT?.write()} 
+                                                onClick={buy} 
                                                 variant={"contained"}
                                                 loading={buyNFT?.isLoading}
                                                 sx={{width: 240}}

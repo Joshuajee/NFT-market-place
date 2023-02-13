@@ -12,6 +12,8 @@ import ConnectScreen from "../components/ui/connectScreen";
 
 const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
+const limit = 50
+
 export default function Profile () {
 
     const { isConnected, address } = useAccount()
@@ -20,58 +22,6 @@ export default function Profile () {
     const [dataFetched, updateFetched] = useState(false);
     const [totalPrice, updateTotalPrice] = useState("0");
 
-    async function getNFTData() {
-
-        let sumPrice = 0;
-        //After adding your Hardhat network to your metamask, this code will get providers and signers
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const addr = await signer.getAddress();
-
-        //Pull the deployed contract instance
-        const contract = new ethers.Contract(contractAddress, NFTMarketplaceABI, signer)
-
-        //create an NFT Token
-        const transaction = await contract.getMyNFTs()
-
-        /*
-        * Below function takes the metadata from tokenURI and the data returned by getMyNFTs() contract function
-        * and creates an object of information that is to be displayed
-        */
-        
-        const items = await Promise.all(transaction.map(async (i: any) => {
-
-            const contract = new ethers.Contract(String(process.env.NEXT_PUBLIC_NFT_CONTRACT), RoyaltyTokenABI, signer)
-
-            const tokenURI = await contract.tokenURI(i.tokenId);
-
-            const meta = (await axios.get(tokenURI)).data;
-
-            const price = ethers.utils.formatUnits(i.price.toString(), 'ether');
-
-            const item = {
-                price,
-                tokenId: i.tokenId.toNumber(),
-                seller: i.seller,
-                image: meta.image,                    
-                name: meta.name,
-                description: meta.description,
-            }
-
-            sumPrice += Number(price);
-
-            return item;
-            
-        }))
-
-        updateData(items as any);
-        updateFetched(true);
-        updateTotalPrice(sumPrice.toPrecision(3));
-    }
-
-    useEffect(() => {
-        //getNFTData();
-    }, [])
 
     const pageContent = (
         <Box>

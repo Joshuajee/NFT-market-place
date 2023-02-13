@@ -30,11 +30,11 @@ const Upload = (props: IProps) => {
 
     const uploadedImages = (
         selectedImage &&
-            <Card role="button" aria-label="preview image" sx={{borderRadius: 4, aspectRatio: "1 / 1", cursor: "pointer"}} onClick={handleClick}>
+            <Card role="button" aria-label="preview image" sx={{borderRadius: 4, aspectRatio: "1 / 1", cursor: "pointer", display: "flex", alignItems: "center"}} onClick={handleClick}>
                 <img                   
                     src={URL.createObjectURL(selectedImage)}
                     alt="Thumb"
-                    style={{objectFit: "contain"}}
+                    style={{objectFit: "contain", width: "100%"}}
                     />
             </Card>
       
