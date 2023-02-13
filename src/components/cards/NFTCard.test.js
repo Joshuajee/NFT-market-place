@@ -13,7 +13,8 @@ const renderComponent = () => {
         image: "joshua", 
         name: "Go lang", 
         tokenId: "20", 
-        contract: "123k4kgmfkdkfgf" 
+        contract: "123k4kgmfkdkfgf" ,
+        price: "1000000000000000000000000"
     }
 
     render(<NFTCard nft={nft}  />);
@@ -57,7 +58,7 @@ describe ("NFT card", () => {
 
         fireEvent.click(image)
 
-        const link = `/collection/${nft.contract}/${nft.tokenId}?image=${nft.image}&name=${nft.name}`
+        const link = `/collection/${nft.contract}/${nft.tokenId}`
 
         expect(mockRouter).toMatchObject({ 
             asPath: link,

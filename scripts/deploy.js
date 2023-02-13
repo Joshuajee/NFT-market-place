@@ -24,11 +24,11 @@ async function main() {
   const nftMarketplace = await NFTMarketplace.deploy();
 
   console.log(
-    `Deployed MarketPlacr to ${nftMarketplace.address}`
+    `Deployed MarketPlace to ${nftMarketplace.address}`
   );
 
   console.log(
-    `Deployed MarketPlace to ${royaltyToken.address}`
+    `Deployed Royalty to ${royaltyToken.address}`
   );
 }
 

@@ -1,10 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useContractRead } from 'wagmi';
-import { polygonMumbai } from "wagmi/chains";
-import { ethers } from "ethers";
 import NFTMarketplaceABI from "../abi/NFTMarketplace.json";
-import RoyaltyTokenABI from "../abi/RoyaltyToken.json";
 import { Grid } from "@mui/material";
 import NFTCard from "../components/cards/NFTCard";
 import Layout from "../components/app/layout";
@@ -12,18 +8,18 @@ import LoadingBG from "../components/app/loaderBg";
 import { ADDRESS } from "../libs/types";
 import useRangeQuery from "../hooks/useRangeQuery";
 import useGetTokenMetadata from "../hooks/useGetTokenMetadata";
+import { METADATA, TOKEN_DETAILS } from "../libs/intefaces";
 
 const contract = String(process.env.NEXT_PUBLIC_CONTRACT)
 const limit = 50
 
 export default function Home() {
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<METADATA[]>([]);
   const [start, setStart] = useState(0);
   const [initialLoading, setInitialLoading] = useState(true)
 
   const trueLimit = useRangeQuery(start, limit)
-
 
   const listSize = useContractRead({
     address: contract as ADDRESS,
@@ -35,12 +31,11 @@ export default function Home() {
     address: contract as ADDRESS,
     abi: NFTMarketplaceABI,
     functionName: 'getNFTsByRange',
-    chainId: polygonMumbai.id,
     args: [start, trueLimit],
     enabled: listSize ? (start > 0) ? true  : false : false
   })
 
-  const NFTMetadata = useGetTokenMetadata(listings.data as Array<any>)
+  const NFTMetadata = useGetTokenMetadata(listings.data as TOKEN_DETAILS[])
 
   useEffect(() => {
     if (start === 0 && listSize.data) setStart(listSize?.data as number)

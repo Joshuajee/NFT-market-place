@@ -1,60 +1,95 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
-import { useContractRead } from 'wagmi'
+import { useAccount, useContractRead, useContractWrite, useContractEvent } from 'wagmi';
+import {  LoadingButton } from "@mui/lab";
 import {  Grid, Typography, Card } from "@mui/material";
 import { useRouter } from "next/router";
-import { getNFTUrl, verifyAddress } from "../../../libs/utils";
-import axios from "axios";
+import { convertToEther, getNFTUrl } from "../../../libs/utils";
 import styles from "../../../styles/Pages.module.css";
 import Layout from "../../../components/app/layout";
-import { polygonMumbai } from "wagmi/chains";
 import RoyaltyTokenABI from "../../../abi/RoyaltyToken.json";
+import NFTMarketplaceABI from "../../../abi/NFTMarketplace.json";
+import { ADDRESS } from "../../../libs/types";
+import { toast } from "react-toastify";
+import LoadingBG from "../../../components/app/loaderBg";
+
+
+const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
 
 
 export default function NFT () {
 
     const router = useRouter()
 
-    const { contract, tokenId, image, name } = router.query
+    const { contract, tokenId } = router.query
 
-    const [data, setData] = useState(null)
+    const { address } = useAccount()
 
-    const tokenData = useContractRead({
-        address: contract as `0x${string}`,
+    const [metadata, setMetadata] = useState<any | null>(null)
+    const [bought, setBought] = useState(false)
+
+    const tokenURI = useContractRead({
+        address: contract as ADDRESS,
         abi: RoyaltyTokenABI,
         functionName: 'tokenURI',
-        chainId: polygonMumbai.id,
         args: [tokenId],
     })
 
-    // const fetchNFTData = async () => {
-    //     const url = getNFTUrl(String(tokenData?.data as string))
-    //     try {
-    //         const res = await axios.get(url)
-    //         setData(res.data)
-    //     } catch (e) {
-    //         console.error(e)
-    //     }
-    // }
+    const listingData = useContractRead({
+        address: contractAddress as ADDRESS,
+        abi: NFTMarketplaceABI,
+        functionName: 'getDetails',
+        args: [contract, tokenId],
+        enabled: tokenURI?.data ? true : false
+    })
 
-    // useEffect(() => {
-    //     if(!verifyAddress(String(contract))) {
-    //         toast.error("Invalid Collection Address, Redirecting...")
+    const buyNFT :any = useContractWrite({
+        mode: 'recklesslyUnprepared',
+        address: contractAddress as ADDRESS,
+        abi: NFTMarketplaceABI,
+        functionName: 'buyItem',
+        args: [contract, tokenId],
+        overrides: {
+            value: metadata?.price,
+        },
+    })
 
-    //         setTimeout(() => {
-    //             router.push(ROUTES.MARKET_PLACE)
-    //         }, 6000)
-    //     }
-    // }, [contract])
+    
+    useEffect(() => {
+       
+        const getMetadata = async () => {
 
-    // useEffect(() => {
+            const token = listingData.data as any
 
-    //     if (tokenData.data) {
-    //         fetchNFTData()
-    //     }
+            try {
+                const data = await (await fetch(getNFTUrl(tokenURI.data as string))).json()
+                setMetadata({...data, price: token?.price, tokenId: token?.tokenId, seller: token?.seller } as any)
+            } catch (e) {
+                toast.error("Oops! an error occured")
+            }
 
-    // }, [tokenData.data])
+        } 
 
+        if (tokenURI.data) getMetadata()
+
+    }, [tokenURI.data, listingData.data])
+
+    useContractEvent({
+        address: contractAddress as ADDRESS,
+        abi: NFTMarketplaceABI,
+        eventName: 'ItemBought',
+        listener(buyer, collection, tokenId, price) {
+            if(buyer === address && collection === contract && tokenId === tokenId && price === price) {
+                toast.success("You have successfully Bought this NFT")
+                setBought(true)
+            }
+        },
+    })
+
+    const buy = () => {
+        if (!address) return toast.error("Please connect your wallet!")
+        buyNFT?.write()
+    }
 
     return (
         <Layout>
@@ -65,14 +100,14 @@ export default function NFT () {
             </Grid>
 
             {
-                true && (
+                (metadata && metadata?.price) ? (
                     <Grid container spacing={2} sx={{marginTop: "2em"}}>
             
                         <Grid item sm={6}> 
             
                             <Card sx={{height: "30em", borderRadius: "10px"}}>
 
-                                <img alt={``} style={{objectFit: "contain", cursor: "pointer", aspectRatio: 1 / 1, width: "100%" }} src={String(image)}  />
+                                <img alt={``} style={{objectFit: "contain", cursor: "pointer", aspectRatio: 1 / 1, width: "100%" }} src={getNFTUrl(String(metadata?.image))}  />
             
                             </Card>                    
             
@@ -83,28 +118,42 @@ export default function NFT () {
                             <Card sx={{height: "30em", borderRadius: "10px", padding: "1em"}}>
             
                                 <Grid item container spacing={2} justifyContent="center">
-                                    <Grid item xs={12}> <Typography className={styles.name} variant="body1"> {name} #{tokenId}</Typography> </Grid>
-                                    {/*<Grid item xs={12}> <Typography variant="body1"> Description: {data?.description} </Typography> </Grid>
-                                    <Grid item xs={12}> <Typography variant="body1"> Price: {data?.price} </Typography> </Grid>
-                                    <Grid item xs={12}> <Typography variant="body1"> Seller: {data?.seller} </Typography> </Grid>
-             */}
-                                    {/* <Grid item xs={12}> <Typography variant="body1"> {data?.seller === address && "You own this NFT"} </Typography> </Grid> */}
-            {/* 
+                                    <Grid item xs={12}> <Typography className={styles.name} variant="body1"> {metadata.name} #{tokenId}</Typography> </Grid>
+                                    <Grid item xs={12}> <Typography variant="body1"> Description: {metadata?.description} </Typography> </Grid>
+                                    <Grid item xs={12}> <Typography variant="body1"> Price: {convertToEther(metadata?.price)} </Typography> </Grid>
+                                    <Grid item xs={12}> <Typography variant="body1"> Seller: {metadata?.seller} </Typography> </Grid>
+            
+                                    <Grid item xs={12}> <Typography variant="body1"> {metadata?.seller === address && "You own this NFT"} </Typography> </Grid>
+        
                                     <Grid item xs={12}>
-                                        <LoadingButton 
-                                            disabled={data?.seller === address}
-                                            onClick={buyNFT} 
-                                            variant={"contained"}
-                                            loading={loading}
-                                            loadingIndicator={"Loading..."}
-                                            >
-                                            Buy {data?.price} ETH
-                                        </LoadingButton> 
-                                    </Grid> */} 
+                                        {
+                                            bought ? 
+                                            (
+                                                <Typography>You&apos;ve Bought this NFT</Typography>
+                                            )
+                                            : (
+                                            <LoadingButton 
+                                                disabled={metadata?.seller === address}
+                                                onClick={buy} 
+                                                variant={"contained"}
+                                                loading={buyNFT?.isLoading}
+                                                sx={{width: 240}}
+                                                loadingIndicator={"Please Wait..."}>
+                                                Buy for { convertToEther(metadata?.price)} 
+                                            </LoadingButton>
+                                            ) 
+                                        }
+                                    </Grid>
+
                                 </Grid>
+
                             </Card>
+
                         </Grid>
+
                     </Grid>
+                ) : (
+                    <LoadingBG />
                 )
             }   
         </Layout>
