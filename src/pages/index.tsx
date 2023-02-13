@@ -8,13 +8,14 @@ import LoadingBG from "../components/app/loaderBg";
 import { ADDRESS } from "../libs/types";
 import useRangeQuery from "../hooks/useRangeQuery";
 import useGetTokenMetadata from "../hooks/useGetTokenMetadata";
+import { METADATA, TOKEN_DETAILS } from "../libs/intefaces";
 
 const contract = String(process.env.NEXT_PUBLIC_CONTRACT)
 const limit = 50
 
 export default function Home() {
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<METADATA[]>([]);
   const [start, setStart] = useState(0);
   const [initialLoading, setInitialLoading] = useState(true)
 
@@ -34,7 +35,7 @@ export default function Home() {
     enabled: listSize ? (start > 0) ? true  : false : false
   })
 
-  const NFTMetadata = useGetTokenMetadata(listings.data as Array<any>)
+  const NFTMetadata = useGetTokenMetadata(listings.data as TOKEN_DETAILS[])
 
   useEffect(() => {
     if (start === 0 && listSize.data) setStart(listSize?.data as number)

@@ -62,6 +62,7 @@ const useGetTokenMetadata = (tokens: TOKEN_DETAILS[] | undefined) => {
 
     }, [tokenURIs, tokens])
 
+
     return metadata
 
 }

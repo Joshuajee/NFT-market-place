@@ -1,5 +1,4 @@
 import { Box, Grid, Typography } from "@mui/material";
-import ConnectionBtn from "../connection/button";
 
 const ConnectScreen = () => {
 

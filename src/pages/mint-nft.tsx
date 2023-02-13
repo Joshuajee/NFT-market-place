@@ -9,8 +9,8 @@ import Royalty from "../components/mint/royalty";
 import axios from "axios";
 import { toast } from "react-toastify";
 import MintModal from "../components/mint/mintModal";
-import { useAccount, useConnect, useContractWrite } from "wagmi";
-import { contractAddress, NFTContract } from "../libs/utils";
+import { useAccount, useContractWrite } from "wagmi";
+import { NFTContract } from "../libs/utils";
 import RoyaltyTokenABI from "../abi/RoyaltyToken.json";
 import { ADDRESS } from "../libs/types";
 
@@ -95,6 +95,8 @@ export default function MintNFT() {
     else if (details.description.trim() === "") return true
     else return false
   }
+
+  console.log([address, tokenURI])
 
   return (
     <Layout>

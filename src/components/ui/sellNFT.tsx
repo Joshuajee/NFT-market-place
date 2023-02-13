@@ -93,41 +93,59 @@ export default function SellNFT(props: IProps) {
     args: [contract.address, tokenId],
   })
 
-  useContractEvent({
-    address: contract.address as ADDRESS,
-    abi: RoyaltyTokenABI,
-    eventName: 'Approval',
-    listener(owner, approved, tokenId) {
-      if(owner === address && approved === contractAddress && tokenId === tokenId) {
-        setIsApproved(true)
-        setLoading(false)
-      }
-    },
-  })
+  // useContractEvent({
+  //   address: contract.address as ADDRESS,
+  //   abi: RoyaltyTokenABI,
+  //   eventName: 'Approval',
+  //   listener(owner, approved, tokenId) {
+  //     if(owner === address && approved === contractAddress && tokenId === tokenId) {
+  //       setIsApproved(true)
+  //       setLoading(false)
+  //     }
+  //   },
+  // })
 
-  useContractEvent({
-    address: contractAddress as ADDRESS,
-    abi: NFTMarketplaceABI,
-    eventName: 'ItemListed',
-    listener(seller, nftAddress, tokenId, price) {
-      if(seller === address //&& nftAddress === contract.address
-        && tokenId === tokenId && price === price
-        ) {
-        setLoading(false)
-        toast("NFT listed Successfully")
-      }
-    },
-  })
+  useEffect(() => {
+    if (approve.isSuccess) {
+      setIsApproved(true)
+      setLoading(false)
+      setHasBeenListed(false)
+      toast("NFT Approved successfully, you can now list to the Marketplace")
+    }
+
+  }, [approve.isSuccess])
+
+  // useContractEvent({
+  //   address: contractAddress as ADDRESS,
+  //   abi: NFTMarketplaceABI,
+  //   eventName: 'ItemListed',
+  //   listener(seller, nftAddress, tokenId, price) {
+  //     if(seller === address //&& nftAddress === contract.address
+  //       && tokenId === tokenId && price === price
+  //       ) {
+  //       setLoading(false)
+  //       toast("NFT listed Successfully")
+  //     }
+  //   },
+  // })
+
+  useEffect(() => {
+    if (listing.isSuccess) {
+      setLoading(false)
+      toast("NFT listed Successfully")
+      setOpen(false)
+    }
+
+  }, [listing.isSuccess])
+
 
   useEffect(() => {
     setIsApproved(approval.data === contractAddress)
   }, [approval.data])  
 
   useEffect(() => {
-    if (isListed?.data?.price  > 0) setHasBeenListed(true)
+    if (isListed?.data?.price as number  > 0) setHasBeenListed(true)
   }, [isListed.data?.price])
-
-  console.log(isListed.data)
 
   const listForSale = () => {
     setLoading(true)
