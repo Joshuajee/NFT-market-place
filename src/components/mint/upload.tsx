@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
-import { useRef, useState } from "react";
+import { useRef, memo} from "react";
 import { Box, Grid, Typography, Card } from "@mui/material";
 import { FiUpload } from "react-icons/fi";
+import Image from "next/image";
 
 
 interface IProps {
@@ -12,8 +12,6 @@ interface IProps {
 const Upload = (props: IProps) => {
 
     const { selectedImage, setSelectedImage } = props;
-
-    const [loading, setLoading] = useState(false);
 
     const fileInput = useRef<HTMLInputElement>(null);
 
@@ -31,10 +29,12 @@ const Upload = (props: IProps) => {
     const uploadedImages = (
         selectedImage &&
             <Card role="button" aria-label="preview image" sx={{borderRadius: 4, aspectRatio: "1 / 1", cursor: "pointer", display: "flex", alignItems: "center"}} onClick={handleClick}>
-                <img                   
+                <Image                 
                     src={URL.createObjectURL(selectedImage)}
                     alt="Thumb"
-                    style={{objectFit: "contain", width: "100%"}}
+                    objectFit="contain"
+                    width={1000}
+                    height={1000}
                     />
             </Card>
       
@@ -52,12 +52,11 @@ const Upload = (props: IProps) => {
 
             <Typography sx={{mt: 2}} variant="subtitle2">Click to Upload Image</Typography>
 
-{/* 
+        {/* 
             <Typography sx={{mt: 2}} variant="subtitle2">Drag and Drop your Image here</Typography> */}
 
         </Grid>
     )
-
 
     return (
         <Box>
@@ -69,4 +68,4 @@ const Upload = (props: IProps) => {
     );
 };
 
-export default Upload;
+export default memo(Upload);

@@ -1,10 +1,9 @@
-/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
 import { useAccount, useContractRead, useContractWrite, useContractEvent } from 'wagmi';
 import {  LoadingButton } from "@mui/lab";
 import {  Grid, Typography, Card } from "@mui/material";
 import { useRouter } from "next/router";
-import { convertToEther, getNFTUrl } from "../../../libs/utils";
+import { contractAddress, convertToEther, getNFTUrl } from "../../../libs/utils";
 import styles from "../../../styles/Pages.module.css";
 import Layout from "../../../components/app/layout";
 import RoyaltyTokenABI from "../../../abi/RoyaltyToken.json";
@@ -12,9 +11,9 @@ import NFTMarketplaceABI from "../../../abi/NFTMarketplace.json";
 import { ADDRESS } from "../../../libs/types";
 import { toast } from "react-toastify";
 import LoadingBG from "../../../components/app/loaderBg";
-
-
-const contractAddress = String(process.env.NEXT_PUBLIC_CONTRACT)
+import Image from "next/image";
+import { METADATA, TOKEN_DETAILS } from "../../../libs/intefaces";
+import { ERROR_META } from "../../../libs/constants";
 
 
 export default function NFT () {
@@ -25,7 +24,7 @@ export default function NFT () {
 
     const { address } = useAccount()
 
-    const [metadata, setMetadata] = useState<any | null>(null)
+    const [metadata, setMetadata] = useState<METADATA | null>(null)
     const [bought, setBought] = useState(false)
 
     const tokenURI = useContractRead({
@@ -59,13 +58,14 @@ export default function NFT () {
        
         const getMetadata = async () => {
 
-            const token = listingData.data as any
+            const token : TOKEN_DETAILS = listingData.data as TOKEN_DETAILS
 
             try {
                 const data = await (await fetch(getNFTUrl(tokenURI.data as string))).json()
-                setMetadata({...data, price: token?.price, tokenId: token?.tokenId, seller: token?.seller } as any)
+                setMetadata({...data, price: token?.price, tokenId: token?.tokenId, seller: token?.seller })
             } catch (e) {
                 toast.error("Oops! an error occured")
+                setMetadata({...ERROR_META, price: token?.price, tokenId: token?.tokenId, seller: token?.seller})
             }
 
         } 
@@ -91,6 +91,7 @@ export default function NFT () {
         buyNFT?.write()
     }
 
+
     return (
         <Layout>
             <Grid container spacing={2} sx={{marginTop: "2em"}}>
@@ -105,10 +106,15 @@ export default function NFT () {
             
                         <Grid item sm={6}> 
             
-                            <Card sx={{height: "30em", borderRadius: "10px"}}>
+                            <Card sx={{height: "30em", borderRadius: "10px", display: "flex", justifyContent: "center", alignItems: "center"}}>
 
-                                <img alt={``} style={{objectFit: "contain", cursor: "pointer", aspectRatio: 1 / 1, width: "100%" }} src={getNFTUrl(String(metadata?.image))}  />
-            
+                                <Image 
+                                    alt={`NFT`} 
+                                    width={1000}
+                                    height={1000 }
+                                    objectFit={"contain"}
+                                    src={getNFTUrl(String(metadata?.image))} />
+
                             </Card>                    
             
                         </Grid>
@@ -118,6 +124,7 @@ export default function NFT () {
                             <Card sx={{height: "30em", borderRadius: "10px", padding: "1em"}}>
             
                                 <Grid item container spacing={2} justifyContent="center">
+                                
                                     <Grid item xs={12}> <Typography className={styles.name} variant="body1"> {metadata.name} #{tokenId}</Typography> </Grid>
                                     <Grid item xs={12}> <Typography variant="body1"> Description: {metadata?.description} </Typography> </Grid>
                                     <Grid item xs={12}> <Typography variant="body1"> Price: {convertToEther(metadata?.price)} </Typography> </Grid>

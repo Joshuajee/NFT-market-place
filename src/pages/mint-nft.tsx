@@ -25,6 +25,14 @@ export default function MintNFT() {
 
   const { address } = useAccount()
 
+  const close = () => {
+    setStatus(0)
+    setOpen(false)
+    setDetails({ name: "", description: ""})
+    setSelectedImage(undefined)
+    setTokenURI(null)
+  }
+
   const mint = useContractWrite({
     mode: 'recklesslyUnprepared',
     address: NFTContract as ADDRESS,
@@ -38,9 +46,12 @@ export default function MintNFT() {
       setStatus(2)
     } else if (mint.isSuccess) {
       toast.success("NFT minted successfully")
-      setOpen(false)
+      close()
     }
-  }, [mint.isLoading, mint.isSuccess])
+
+    if (mint.isError) setStatus(1)
+    
+  }, [mint.isLoading, mint.isSuccess, mint.isError])
 
   const uploadFile = async () => {
     setOpen(true)
@@ -61,7 +72,7 @@ export default function MintNFT() {
     } catch (e) {
       console.error(e)
       toast.error("Error! uploading file")
-      setOpen(false)
+      close()
     }
   } 
 
@@ -79,11 +90,10 @@ export default function MintNFT() {
 
       setTokenURI(`ipfs://${res?.data?.IpfsHash}`)
 
-      //toast.success("NFT Minted Successfully")
-
     } catch (e) {
       console.error(e)
       toast.error("Error! uploading file")
+      close()
     }
   } 
 
@@ -96,8 +106,6 @@ export default function MintNFT() {
     else return false
   }
 
-  console.log([address, tokenURI])
-
   return (
     <Layout>
       {/* <Card sx={{p: 4, borderRadius: 2, mt: 10}}> */}
@@ -105,9 +113,10 @@ export default function MintNFT() {
           <Grid item sm={12} md={6} sx={{ width: "100%"}}>
             <Upload selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
           </Grid>
+
           <Grid item sm={12} md={6} sx={{ width: "100%"}}>
             <Description details={details} setDetails={setDetails} />
-            <Royalty royalty={royalty} setRoyalty={setRoyalty} />
+            {/* <Royalty royalty={royalty} setRoyalty={setRoyalty} /> */}
           </Grid>
 
           <Grid item container justifyContent={"center"} md={12}>

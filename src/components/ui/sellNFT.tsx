@@ -7,7 +7,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { polygonMumbai } from "wagmi/chains";
 import { IconButton, InputAdornment, Typography, TextField, Box } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import { NFT_COLLECTION } from '../../libs/intefaces';
@@ -93,38 +92,44 @@ export default function SellNFT(props: IProps) {
     args: [contract.address, tokenId],
   })
 
-  // useContractEvent({
-  //   address: contract.address as ADDRESS,
-  //   abi: RoyaltyTokenABI,
-  //   eventName: 'Approval',
-  //   listener(owner, approved, tokenId) {
-  //     if(owner === address && approved === contractAddress && tokenId === tokenId) {
-  //       setIsApproved(true)
-  //       setLoading(false)
-  //     }
-  //   },
-  // })
+  useContractEvent({
+    address: contract.address as ADDRESS,
+    abi: RoyaltyTokenABI,
+    eventName: 'Approval',
+    listener(owner, approved, tokenId) {
+      console.log(owner, approved, tokenId)
+      if(owner === address && approved === contractAddress && tokenId === tokenId) {
+        setIsApproved(true)
+        setLoading(false)
+        toast("NFT Approved successfully, you can now list to the Marketplace")
+      }
+    },
+  })
 
-  useEffect(() => {
-    if (approve.isSuccess) {
-      setIsApproved(true)
-      setLoading(false)
-      setHasBeenListed(false)
-      toast("NFT Approved successfully, you can now list to the Marketplace")
-    }
+  // useEffect(() => {
+  //   if (approve.isSuccess) {
+  //     setIsApproved(true)
+  //     setLoading(false)
+  //     setHasBeenListed(false)
+  //     toast("NFT Approved successfully, you can now list to the Marketplace")
+  //   }
 
-  }, [approve.isSuccess])
+  // }, [approve.isSuccess])
 
   // useContractEvent({
   //   address: contractAddress as ADDRESS,
   //   abi: NFTMarketplaceABI,
   //   eventName: 'ItemListed',
   //   listener(seller, nftAddress, tokenId, price) {
-  //     if(seller === address //&& nftAddress === contract.address
+  //     //console.log(seller, nftAddress, tokenId, price)
+  //     console.log(nftAddress)
+  //     if(seller === address && nftAddress === contract.address
   //       && tokenId === tokenId && price === price
   //       ) {
   //       setLoading(false)
   //       toast("NFT listed Successfully")
+  //       setOpen(false)
+  //       setHasBeenListed(false)
   //     }
   //   },
   // })
@@ -154,12 +159,14 @@ export default function SellNFT(props: IProps) {
 
   const sellerAddress = (listed?.data as any)?.[1]
 
+  console.log(listed.data)
+
   return (
     <>
       <Box sx={{ position: "absolute" }}  >
         { 
           (sellerAddress != address && !hasBeenListed) && (
-            <IconButton  onClick={() => setOpen(true)}> 
+            <IconButton sx={{zIndex: "1"}} onClick={() => setOpen(true)}> 
               <SellIcon color="success" />
             </IconButton> 
           )

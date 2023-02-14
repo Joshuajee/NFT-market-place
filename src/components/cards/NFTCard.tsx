@@ -1,13 +1,14 @@
-/* eslint-disable @next/next/no-img-element */
 import { Box, Card, Grid, Typography } from "@mui/material"
 import { ethers } from "ethers"
 import { useRouter } from "next/router"
-import React from "react"
-import { NFT_COLLECTION, NFT_DETAILS } from "../../libs/intefaces"
+import Image from "next/image"
+import React, { useState } from "react"
 import { getNFTUrl } from "../../libs/utils"
+import { METADATA } from "../../libs/intefaces"
+
 
 interface IProps {
-    nft: any
+    nft: METADATA;
 }
 
 const NFTCard = (props: IProps) => {
@@ -19,9 +20,16 @@ const NFTCard = (props: IProps) => {
     return (
         <Grid item xs={12} sm={6} md={4} lg={3} data-aos={"zoom-up"} >
 
-            <Card sx={{ borderRadius: "25px", height: "calc(100% - 3.4em)" }}>
-
-                <img alt={`${name} #${tokenId}`}  onClick={() => router.push(`/collection/${contract}/${tokenId}`)} style={{objectFit: "cover", cursor: "pointer", width: "100%", aspectRatio: 1 / 1 }} src={getNFTUrl(image)}  />
+            <Card 
+                sx={{borderRadius: "25px", height: "calc(100% - 3.4em)", cursor: "pointer"}}
+                onClick={() => router.push(`/collection/${contract}/${tokenId}`)}>
+                
+                <Image 
+                    alt={`${name} #${tokenId}`}  
+                    height={600}
+                    width={600}
+                    objectFit="cover"
+                    src={getNFTUrl(image)}  />
 
                 <Box sx={{position: "relative", top: "-5em", left: "1em"}}>
 
