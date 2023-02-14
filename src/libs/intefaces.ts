@@ -24,6 +24,7 @@ export interface TOKEN_DETAILS {
     price: number;
     nftAddress: ADDRESS;
     tokenId: number;
+    seller: ADDRESS
 }
 
 export interface CONTRACTS {
@@ -39,5 +40,6 @@ export interface METADATA {
     image: string; 
     name: string;
     price: number; 
-    tokenId: number;      
+    tokenId: number;  
+    seller: ADDRESS;    
 }

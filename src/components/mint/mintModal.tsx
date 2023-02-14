@@ -54,21 +54,23 @@ export default function MintModal(props: IProps) {
         <DialogContent sx={{display: "flex", justifyContent: "center"}} >
           <DialogContentText sx={{display: "flex", alignItems: "center", flexDirection: "column"}}  id="alert-dialog-slide-description">
 
-            <Triangle
-              height="80"
-              width="80"
-              color="#4fa94d"
-              ariaLabel="triangle-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
+            {
+              !(tokenURI && status === 1) ?
+                <Triangle
+                  height="80"
+                  width="80"
+                  color="#4fa94d"
+                  ariaLabel="triangle-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  visible={true}
+                />
+              :
+              <LoadingButton sx={{mt: 4}} variant='contained' onClick={mint?.write}> Mint Token </LoadingButton>
+            }
+
 
             <Typography sx={{my: 4}}>{state[status]} {status + 1} / 3 </Typography>
-
-            {
-              tokenURI &&<LoadingButton variant='contained' onClick={mint?.write}> Mint </LoadingButton>
-            }
 
           </DialogContentText>
 

@@ -26,15 +26,15 @@ export default function ConnectionInfo(props: IProps) {
 
   const { disconnect } = useDisconnect()
 
-  // const copyAddress = () => {
-  //   navigator.clipboard.writeText(String(address))
-  //   toast.success("Address copied to clipboard")
-  // }
+  const copyAddress = () => {
+    navigator.clipboard.writeText(String(address))
+    toast.success("Address copied to clipboard")
+  }
 
   return (
     <Dropdown anchorEl={anchorEl} handleClose={handleClose}>
       <Box>
-        <Typography sx={{mx: 1, borderBottom: 1, borderColor: "gray"}} variant='subtitle1'>ACTIVE ACCOUNT</Typography>
+        
         <Box sx={{px: 2}}>
 
           <Grid sx={{mt: 2}} container flexDirection={"column"} justifyContent={"center"} alignItems={"center"}> 

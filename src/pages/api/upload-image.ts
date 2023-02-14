@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import multer from 'multer';
 import pinataSDK from '@pinata/sdk';
-const fs = require('fs');
+import fs from 'fs';
 
 const pinata = pinataSDK(String(process.env.PINATA_KEY), String(process.env.PINATA_SECRET));
 

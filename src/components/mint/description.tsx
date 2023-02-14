@@ -13,32 +13,6 @@ const Description = (props: IProps) => {
 
     const { details, setDetails } = props
 
-    // const uploadData = async () => {
-
-    //     const payload = {  
-    //         name,  
-    //         , 
-    //         image: `https://ipfs.io/ipfs/${sessionStorage.getItem("image")}`      
-    //     }
-
-    //     setLoading(true)
-    
-    //     try {
-            
-    //         const res = await axios.post('/api/upload-meta', payload)
-    
-    //         sessionStorage.setItem("json", res?.data?.IpfsHash)
-    
-    //         props.setStage(2)
-            
-    //     } catch (error) {
-
-    //     }
-    
-    //     setLoading(false)
-    // }
-    
-
     return (
         <Box>
             <FormControl sx={{marginTop: "0.4em", width: "100%"}}>
@@ -53,6 +27,7 @@ const Description = (props: IProps) => {
                     multiline
                     label={"Description"} 
                     rows={6}
+                    value={details.description}
                     onChange={(e) => setDetails({ ...details, description: e.target.value })}
                     sx={{marginTop: "0.6em", width: "100%"}}
                     />

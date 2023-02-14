@@ -4,6 +4,7 @@ import RoyaltyTokenABI from "../abi/RoyaltyToken.json";
 import { CONTRACTS, METADATA, TOKEN_DETAILS } from "../libs/intefaces";
 import { getNFTUrl } from "../libs/utils";
 import { ADDRESS } from "../libs/types";
+import { ERROR_META } from "../libs/constants";
 
 
 const useGetTokenMetadata = (tokens: TOKEN_DETAILS[] | undefined) => {
@@ -49,9 +50,17 @@ const useGetTokenMetadata = (tokens: TOKEN_DETAILS[] | undefined) => {
         const getMetadata = async () => {
 
             const data = await Promise.all(tokenURIs?.map(async (tokenURI: string, index: number) => {
-                const data = await (await fetch(getNFTUrl(tokenURI))).json()
                 const token = tokens?.[index]
-                return { ...data, price: token?.price, tokenId: token?.tokenId, contract: token?.nftAddress  }
+
+                try {
+                    const data = await (await fetch(getNFTUrl(tokenURI))).json()
+                    return { ...data, price: token?.price, tokenId: token?.tokenId, contract: token?.nftAddress  }
+                } catch (e) {
+                    console.log({...ERROR_META, price: token?.price, tokenId: token?.tokenId, contract: token?.nftAddress})
+                    return {...ERROR_META, price: token?.price, tokenId: token?.tokenId, contract: token?.nftAddress}
+                }
+            
+
             }))
 
             setMetadata(data)
@@ -61,6 +70,8 @@ const useGetTokenMetadata = (tokens: TOKEN_DETAILS[] | undefined) => {
         getMetadata()
 
     }, [tokenURIs, tokens])
+
+    console.log(metadata)
 
 
     return metadata

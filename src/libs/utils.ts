@@ -1,24 +1,13 @@
 import { ethers } from "ethers";
 
-export const truncateAddress = (address: string) => {
-  if (!address) return "No Account";
-  const match = address.match(
-    /^(0x[a-zA-Z0-9]{2})[a-zA-Z0-9]+([a-zA-Z0-9]{2})$/
-  );
-  if (!match) return address;
-  return `${match[1]}…${match[2]}`;
-};
-  
-export const toHex = (num: number) => {
-  const val = Number(num);
-  return "0x" + val.toString(16);
-};
 
 export const verifyAddress = (address: string) => {
   return ethers.utils.isAddress(address.trim());
 }
   
 export const getNFTUrl = (url: string) => {
+
+  if (url.startsWith('ipfs://')) console.log(url)
 
   const ipfs = 'https://ipfs.io/ipfs/'
 
@@ -69,3 +58,9 @@ export const networkNameByChainId = (chainId: number) => {
 }
 
 export const NFTContract = process.env.NEXT_PUBLIC_NFT_CONTRACT
+
+
+
+export function cn(...classes: string[]) {
+  return classes.filter(Boolean).join(' ');
+}
